@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#111111">
+<meta name="description" content="Foto in Punktwolke mit Rauchfahne verwandeln">
+<link rel="manifest" href="manifest.json">
+<title>Punktwolke</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:system-ui,sans-serif;background:#1a1a1a;color:#eee;min-height:100vh;}
+header{background:#111;padding:12px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #333;}
+header h1{font-size:16px;font-weight:500;color:#fff;}
+.main{padding:12px;max-width:800px;margin:0 auto;}
+.dz{border:2px dashed #444;border-radius:12px;padding:20px;text-align:center;cursor:pointer;background:#222;position:relative;margin-bottom:12px;transition:border-color .2s;}
+.dz:hover{border-color:#888;}
+.dz.loaded{border-color:#4caf50;border-style:solid;}
+.dz input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.dz .lbl{font-size:13px;color:#888;}
+.controls{background:#222;border-radius:12px;border:1px solid #333;padding:12px 14px;margin-bottom:12px;display:grid;gap:8px;}
+.sec{font-size:10px;font-weight:600;color:#666;letter-spacing:.08em;margin-top:6px;}
+.cr{display:flex;align-items:center;gap:8px;}
+.cr label{font-size:12px;color:#aaa;min-width:120px;}
+.cr input[type=range]{flex:1;accent-color:#fff;}
+.cr .val{font-size:12px;font-weight:600;min-width:44px;text-align:right;color:#fff;}
+.cr select{flex:1;font-size:12px;padding:4px 8px;border-radius:6px;border:1px solid #444;background:#333;color:#eee;}
+.canvas-wrap{border-radius:12px;overflow:hidden;background:#111;margin-bottom:10px;}
+canvas{display:block;width:100%;background:#111;}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;}
+button{font-size:13px;padding:10px 18px;border-radius:8px;border:1px solid #444;background:#333;color:#eee;cursor:pointer;font-weight:500;}
+button:hover{background:#444;}
+button.primary{background:#fff;color:#111;border-color:#fff;}
+button.primary:hover{background:#ddd;}
+.save-info{font-size:11px;color:#666;margin-top:6px;}
+</style>
+</head>
+<body>
+<header>
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+    <circle cx="6" cy="6" r="3" fill="#fff"/>
+    <circle cx="14" cy="5" r="2" fill="#fff" opacity=".7"/>
+    <circle cx="9" cy="13" r="2.5" fill="#fff" opacity=".8"/>
+    <circle cx="18" cy="11" r="1.5" fill="#fff" opacity=".5"/>
+    <circle cx="4" cy="17" r="2" fill="#fff" opacity=".4"/>
+    <circle cx="20" cy="18" r="1" fill="#fff" opacity=".3"/>
+  </svg>
+  <h1>Punktwolke</h1>
+</header>
+
+<div class="main">
+  <div class="dz" id="dz">
+    <input type="file" accept="image/*" id="fileIn">
+    <div class="lbl" id="dzLbl">Foto laden — tippen oder hineinziehen</div>
+  </div>
+
+  <div class="controls">
+    <div class="sec">PUNKTE</div>
+    <div class="cr"><label>Punktgrösse</label><input type="range" id="ptSize" min="1" max="20" value="6" step="1"><span class="val" id="ptSizeV">6px</span></div>
+    <div class="cr"><label>Punktdichte</label><input type="range" id="density" min="2" max="30" value="8" step="1"><span class="val" id="densityV">8</span></div>
+    <div class="cr"><label>Transparenz</label><input type="range" id="ptAlpha" min="10" max="100" value="90" step="1"><span class="val" id="ptAlphaV">90%</span></div>
+
+    <div class="sec">RAUCHFAHNE</div>
+    <div class="cr"><label>Richtung</label>
+      <select id="dir">
+        <option value="right">rechts</option>
+        <option value="left">links</option>
+        <option value="up">oben</option>
+        <option value="down">unten</option>
+      </select>
+    </div>
+    <div class="cr"><label>Länge</label><input type="range" id="tailLen" min="0" max="150" value="60" step="1"><span class="val" id="tailLenV">60%</span></div>
+    <div class="cr"><label>Schwung</label><input type="range" id="curl" min="-80" max="80" value="25" step="1"><span class="val" id="curlV">25</span></div>
+    <div class="cr"><label>Streuung</label><input type="range" id="spread" min="0" max="80" value="30" step="1"><span class="val" id="spreadV">30</span></div>
+    <div class="cr"><label>Auflösung</label><input type="range" id="dissolve" min="0" max="100" value="60" step="1"><span class="val" id="dissolveV">60%</span></div>
+  </div>
+
+  <div class="canvas-wrap">
+    <canvas id="cv"></canvas>
+  </div>
+
+  <div class="btn-row">
+    <button class="primary" id="dlBtn">💾 Speichern</button>
+    <button id="reBtn">Neu zeichnen</button>
+  </div>
+  <div class="save-info" id="saveInfo"></div>
+</div>
+
+<script>
+let srcImg=null,dotData=[],saveIdx=1;
+const cv=document.getElementById('cv');
+const ctx=cv.getContext('2d');
+
+function g(id){return document.getElementById(id);}
+
+function bind(id,outId,suffix,fn){
+  g(id).addEventListener('input',function(){
+    g(outId).textContent=Math.round(+this.value)+suffix;
+    if(fn)fn();
+  });
+}
+bind('ptSize','ptSizeV','px',render);
+bind('density','densityV','',render);
+bind('ptAlpha','ptAlphaV','%',render);
+bind('tailLen','tailLenV','%',render);
+bind('curl','curlV','',render);
+bind('spread','spreadV','',render);
+bind('dissolve','dissolveV','%',render);
+g('dir').addEventListener('change',render);
+
+g('fileIn').addEventListener('change',function(){
+  if(!this.files[0])return;
+  const r=new FileReader();
+  r.onload=e=>{
+    const img=new Image();
+    img.onload=()=>{
+      srcImg=img;
+      g('dz').classList.add('loaded');
+      g('dzLbl').textContent=this.files[0].name;
+      buildDots();
+      render();
+    };
+    img.src=e.target.result;
+  };
+  r.readAsDataURL(this.files[0]);
+});
+
+function buildDots(){
+  if(!srcImg)return;
+  const step=+g('density').value;
+  const maxW=600,maxH=500;
+  let sw=srcImg.width,sh=srcImg.height;
+  const scale=Math.min(maxW/sw,maxH/sh,1);
+  sw=Math.round(sw*scale);sh=Math.round(sh*scale);
+  const offC=document.createElement('canvas');
+  offC.width=sw;offC.height=sh;
+  const offCtx=offC.getContext('2d');
+  offCtx.drawImage(srcImg,0,0,sw,sh);
+  const imgData=offCtx.getImageData(0,0,sw,sh).data;
+  dotData=[];
+  for(let y=step/2;y<sh;y+=step){
+    for(let x=step/2;x<sw;x+=step){
+      const i=(Math.floor(y)*sw+Math.floor(x))*4;
+      if(imgData[i+3]<10)continue;
+      dotData.push({
+        nx:x/sw,ny:y/sh,
+        r:imgData[i],g:imgData[i+1],b:imgData[i+2],a:imgData[i+3]
+      });
+    }
+  }
+}
+
+function render(){
+  if(!srcImg){
+    cv.width=600;cv.height=300;
+    ctx.fillStyle='#111';ctx.fillRect(0,0,600,300);
+    ctx.fillStyle='#444';ctx.font='14px system-ui';ctx.textAlign='center';
+    ctx.fillText('Bitte ein Foto laden',300,155);
+    return;
+  }
+  buildDots();
+  const W=cv.offsetWidth||600;
+  const srcW=srcImg.width,srcH=srcImg.height;
+  const imgScale=Math.min(W*0.58/srcW,480/srcH,1);
+  const iW=srcW*imgScale,iH=srcH*imgScale;
+  const dir=g('dir').value;
+  const tailLen=+g('tailLen').value/100;
+  const extraW=(dir==='left'||dir==='right')?W*tailLen*0.5:0;
+  const extraH=(dir==='up'||dir==='down')?iH*tailLen*0.8:0;
+  cv.width=W;
+  cv.height=Math.max(iH+extraH+40,200);
+  const H=cv.height;
+
+  ctx.fillStyle='#111';ctx.fillRect(0,0,W,H);
+
+  const ptSize=+g('ptSize').value;
+  const ptAlpha=+g('ptAlpha').value/100;
+  const curl=+g('curl').value;
+  const spread=+g('spread').value;
+  const dissolve=+g('dissolve').value/100;
+
+  let imgX,imgY;
+  if(dir==='right'){imgX=(W-iW)*0.2;imgY=(H-iH)/2;}
+  else if(dir==='left'){imgX=(W-iW)*0.8;imgY=(H-iH)/2;}
+  else if(dir==='up'){imgX=(W-iW)/2;imgY=H-iH-10;}
+  else{imgX=(W-iW)/2;imgY=10;}
+
+  const STEPS=20;
+
+  dotData.forEach(d=>{
+    const px=imgX+d.nx*iW;
+    const py=imgY+d.ny*iH;
+
+    ctx.beginPath();
+    ctx.arc(px,py,ptSize/2,0,Math.PI*2);
+    ctx.fillStyle=`rgba(${d.r},${d.g},${d.b},${ptAlpha*d.a/255})`;
+    ctx.fill();
+
+    if(tailLen<=0)return;
+
+    for(let s=1;s<=STEPS;s++){
+      const t=s/STEPS;
+      const noiseX=(Math.random()-0.5)*spread*t*2;
+      const noiseY=(Math.random()-0.5)*spread*t*2;
+      const curlOff=curl*t*t;
+      const dist=t*Math.max(iW,iH)*tailLen;
+
+      let tx=px,ty=py;
+      if(dir==='right'){tx=px+dist;ty=py+curlOff+noiseY;}
+      else if(dir==='left'){tx=px-dist;ty=py+curlOff+noiseY;}
+      else if(dir==='up'){ty=py-dist;tx=px+curlOff+noiseX;}
+      else{ty=py+dist;tx=px+curlOff+noiseX;}
+
+      const alpha=ptAlpha*(d.a/255)*Math.pow(1-t,1.2)*(1-dissolve*t*0.9);
+      if(alpha<=0.01)continue;
+      const sz=Math.max(0.3,(ptSize/2)*(1-t*dissolve*0.7));
+
+      ctx.beginPath();
+      ctx.arc(tx,ty,sz,0,Math.PI*2);
+      ctx.fillStyle=`rgba(${d.r},${d.g},${d.b},${Math.min(1,alpha)})`;
+      ctx.fill();
+    }
+  });
+}
+
+g('reBtn').addEventListener('click',render);
+
+g('dlBtn').addEventListener('click',()=>{
+  if(!srcImg)return;
+  const name='punktwolke_'+String(saveIdx).padStart(3,'0')+'.png';
+  const a=document.createElement('a');
+  a.download=name;a.href=cv.toDataURL('image/png');a.click();
+  g('saveInfo').textContent='Gespeichert: '+name;
+  saveIdx++;
+});
+
+render();
+
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('sw.js');
+}
+</script>
+</body>
+</html>
