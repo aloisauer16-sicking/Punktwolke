@@ -11,8 +11,8 @@
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:system-ui,sans-serif;background:#1a1a1a;color:#eee;min-height:100vh;}
 header{background:#111;padding:10px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #333;}
-header h1{font-size:13px;font-weight:500;color:#fff;letter-spacing:.01em;}
-header .copy{font-size:10px;color:#555;margin-left:auto;white-space:nowrap;}
+header svg{flex-shrink:0;}
+header h1{font-size:12px;font-weight:500;color:#fff;letter-spacing:.01em;white-space:nowrap;}
 .main{padding:12px;max-width:800px;margin:0 auto;}
 .dz{border:2px dashed #444;border-radius:12px;padding:20px;text-align:center;cursor:pointer;background:#222;position:relative;margin-bottom:12px;transition:border-color .2s;}
 .dz:hover{border-color:#888;}
@@ -25,28 +25,58 @@ header .copy{font-size:10px;color:#555;margin-left:auto;white-space:nowrap;}
 .cr label{font-size:12px;color:#aaa;min-width:130px;}
 .cr input[type=range]{flex:1;accent-color:#fff;}
 .cr .val{font-size:12px;font-weight:600;min-width:52px;text-align:right;color:#fff;}
-/* Drehregler */
+
+/* ── Drehregler ── */
 .dir-row{display:flex;align-items:center;gap:8px;}
-.dir-row > label{font-size:12px;color:#aaa;min-width:130px;}
+.dir-row > label{font-size:12px;color:#aaa;min-width:130px;flex-shrink:0;}
 .dial-wrap{display:flex;align-items:center;gap:10px;flex:1;}
-.dial{width:52px;height:52px;border-radius:50%;background:#2a2a2a;border:2px solid #555;position:relative;cursor:grab;touch-action:none;user-select:none;flex-shrink:0;}
-.dial:active{cursor:grabbing;border-color:#888;}
-.dial-inner{position:absolute;inset:5px;border-radius:50%;border:1px solid #3a3a3a;}
-.dial-dot{position:absolute;width:5px;height:5px;background:#fff;border-radius:50%;top:50%;left:50%;margin:-2.5px -2.5px;transform-origin:center center;}
-.dial-name{font-size:12px;color:#fff;font-weight:600;}
-.canvas-wrap{border-radius:12px;overflow:hidden;background:#111;margin-bottom:10px;}
+.dial{
+  width:56px;height:56px;border-radius:50%;
+  background:radial-gradient(circle at 35% 35%,#3a3a3a,#1e1e1e);
+  border:2px solid #555;position:relative;
+  cursor:grab;touch-action:none;user-select:none;flex-shrink:0;
+  outline:none;
+}
+.dial:focus{border-color:#aaa;}
+.dial:active{cursor:grabbing;}
+/* Skala-Striche */
+.dial-tick{position:absolute;width:2px;height:6px;background:#444;border-radius:1px;top:3px;left:50%;margin-left:-1px;transform-origin:1px 25px;}
+.dial-tick.major{background:#666;height:8px;}
+/* Zeiger-Linie */
+.dial-needle{
+  position:absolute;top:50%;left:50%;
+  width:2px;height:20px;
+  background:linear-gradient(to top,#fff,rgba(255,255,255,0.4));
+  border-radius:1px;
+  transform-origin:50% 100%;
+  margin-left:-1px;margin-top:-20px;
+  transition:transform .08s ease;
+}
+.dial-info{display:flex;flex-direction:column;gap:2px;}
+.dial-sym{font-size:18px;line-height:1;}
+.dial-lbl{font-size:11px;color:#888;}
+.dial-deg{font-size:11px;color:#555;}
+.dial-hint{font-size:10px;color:#444;margin-top:2px;}
+
+.canvas-wrap{border-radius:12px;overflow:hidden;background:#111;margin-bottom:10px;position:relative;}
 canvas{display:block;width:100%;height:auto;background:#111;}
+.prev-badge{
+  position:absolute;bottom:8px;right:10px;
+  font-size:10px;color:#555;background:rgba(0,0,0,.5);
+  padding:2px 6px;border-radius:4px;pointer-events:none;
+}
 .btn-row{display:flex;gap:8px;flex-wrap:wrap;}
 button{font-size:13px;padding:10px 18px;border-radius:8px;border:1px solid #444;background:#333;color:#eee;cursor:pointer;font-weight:500;}
 button:hover{background:#444;}
 button.primary{background:#fff;color:#111;border-color:#fff;}
 button.primary:hover{background:#ddd;}
+button:disabled{opacity:.4;cursor:default;}
 .save-info{font-size:11px;color:#666;margin-top:6px;}
 </style>
 </head>
 <body>
 <header>
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
     <circle cx="6" cy="6" r="3" fill="#fff"/>
     <circle cx="14" cy="5" r="2" fill="#fff" opacity=".7"/>
     <circle cx="9" cy="13" r="2.5" fill="#fff" opacity=".8"/>
@@ -54,8 +84,7 @@ button.primary:hover{background:#ddd;}
     <circle cx="4" cy="17" r="2" fill="#fff" opacity=".4"/>
     <circle cx="20" cy="18" r="1" fill="#fff" opacity=".3"/>
   </svg>
-  <h1>Punktwolke 02 © Alois Auer – 2026</h1>
-  <span class="copy">© Alois Auer – 2026</span>
+  <h1>Punktwolke 02 &nbsp;©&thinsp;Alois Auer –&thinsp;2026</h1>
 </header>
 
 <div class="main">
@@ -69,7 +98,6 @@ button.primary:hover{background:#ddd;}
     <div class="cr"><label>Punktgrösse</label><input type="range" id="ptSize" min="1" max="200" value="60" step="1"><span class="val" id="ptSizeV">6.0px</span></div>
     <div class="cr"><label>Punktdichte</label><input type="range" id="density" min="1" max="300" value="80" step="1"><span class="val" id="densityV">8.0</span></div>
     <div class="cr"><label>Punkteanzahl</label><input type="range" id="ptCount" min="0" max="100" value="100" step="1"><span class="val" id="ptCountV">100%</span></div>
-    <div class="cr"><label>Mindestabstand</label><input type="range" id="spacing" min="0" max="100" value="0" step="1"><span class="val" id="spacingV">0x</span></div>
     <div class="cr"><label>Transparenz</label><input type="range" id="ptAlpha" min="10" max="100" value="90" step="1"><span class="val" id="ptAlphaV">90%</span></div>
     <div class="cr"><label>Farbsättigung</label><input type="range" id="saturation" min="0" max="100" value="100" step="1"><span class="val" id="saturationV">100%</span></div>
 
@@ -80,11 +108,16 @@ button.primary:hover{background:#ddd;}
     <div class="dir-row">
       <label>Richtung</label>
       <div class="dial-wrap">
-        <div class="dial" id="dirDial" title="Ziehen zum Drehen · Doppelklick zum Einrasten">
-          <div class="dial-inner"></div>
-          <div class="dial-dot" id="dialDot"></div>
+        <!-- tabindex damit Tastaturfokus möglich -->
+        <div class="dial" id="dirDial" tabindex="0" title="Ziehen · ↑↓ Tasten (+15°)">
+          <div class="dial-needle" id="dialNeedle"></div>
         </div>
-        <span class="dial-name" id="dialName">→ rechts</span>
+        <div class="dial-info">
+          <span class="dial-sym" id="dialSym">→</span>
+          <span class="dial-lbl" id="dialLbl">rechts</span>
+          <span class="dial-deg" id="dialDeg">0°</span>
+          <span class="dial-hint">↑↓ Tasten oder ziehen</span>
+        </div>
       </div>
     </div>
     <div class="cr"><label>Länge</label><input type="range" id="tailLen" min="0" max="150" value="60" step="1"><span class="val" id="tailLenV">60%</span></div>
@@ -95,6 +128,7 @@ button.primary:hover{background:#ddd;}
 
   <div class="canvas-wrap">
     <canvas id="cv"></canvas>
+    <div class="prev-badge" id="prevBadge"></div>
   </div>
 
   <div class="btn-row">
@@ -105,90 +139,124 @@ button.primary:hover{background:#ddd;}
 </div>
 
 <script>
-let srcImg=null, dotData=[], saveIdx=1;
+// ─────────────────────────────────────────────────────────────────────────────
+// Globals
+// ─────────────────────────────────────────────────────────────────────────────
+let srcImg = null;          // geladenes Originalbild
+let dotDataPrev = [];       // Punkte für Vorschau (800×800-skaliert)
+let saveIdx = 1;
 let lastSaveName = localStorage.getItem('punktwolke_lastSaveName') || 'punktwolke';
-let dirAngle = 0; // Grad, 0=rechts, 90=unten, 180=links, 270=oben
+let dirAngle = 0;           // 0–359°, 0=rechts
+let renderTimer = null;     // Debounce
+
+const PREV_MAX = 800;       // Vorschau max. 800×800 px
 
 const cv  = document.getElementById('cv');
 const ctx = cv.getContext('2d');
 function g(id){ return document.getElementById(id); }
-function ptSizeVal(){ return +g('ptSize').value / 10; }
-function densityVal(){ return +g('density').value / 10; }
 
-// ── Drehregler ──────────────────────────────────────────────────────────────
-const dial     = g('dirDial');
-const dialDot  = g('dialDot');
-const dialName = g('dialName');
+// Slider-Werte als Float
+function ptSizeVal()  { return +g('ptSize').value  / 10; }
+function densityVal() { return +g('density').value / 10; }
 
-const DIR_STEPS = [
+// ─────────────────────────────────────────────────────────────────────────────
+// Drehregler — 15°-Schritte, Drag + Cursor-Tasten
+// ─────────────────────────────────────────────────────────────────────────────
+const dial       = g('dirDial');
+const dialNeedle = g('dialNeedle');
+
+// Skala-Striche erzeugen (24 Striche à 15°)
+for(let i=0;i<24;i++){
+  const t = document.createElement('div');
+  t.className = 'dial-tick' + (i%6===0?' major':'');
+  t.style.transform = `rotate(${i*15}deg)`;
+  dial.appendChild(t);
+}
+
+const DIR_TABLE = [
   {a:0,   sym:'→', lbl:'rechts'},
-  {a:45,  sym:'↘', lbl:'rechts-unten'},
+  {a:15,  sym:'↗', lbl:'rechts +15°'},
+  {a:30,  sym:'↗', lbl:'rechts +30°'},
+  {a:45,  sym:'↗', lbl:'rechts-unten'},
+  {a:60,  sym:'↘', lbl:'rechts-unten +'},
+  {a:75,  sym:'↘', lbl:'rechts-unten ++'},
   {a:90,  sym:'↓', lbl:'unten'},
+  {a:105, sym:'↙', lbl:'unten +15°'},
+  {a:120, sym:'↙', lbl:'unten +30°'},
   {a:135, sym:'↙', lbl:'links-unten'},
+  {a:150, sym:'↙', lbl:'links-unten +'},
+  {a:165, sym:'↙', lbl:'links-unten ++'},
   {a:180, sym:'←', lbl:'links'},
+  {a:195, sym:'↖', lbl:'links +15°'},
+  {a:210, sym:'↖', lbl:'links +30°'},
   {a:225, sym:'↖', lbl:'links-oben'},
+  {a:240, sym:'↖', lbl:'links-oben +'},
+  {a:255, sym:'↖', lbl:'links-oben ++'},
   {a:270, sym:'↑', lbl:'oben'},
+  {a:285, sym:'↗', lbl:'oben +15°'},
+  {a:300, sym:'↗', lbl:'oben +30°'},
   {a:315, sym:'↗', lbl:'rechts-oben'},
+  {a:330, sym:'↗', lbl:'rechts-oben +'},
+  {a:345, sym:'↗', lbl:'rechts-oben ++'},
 ];
 
 function updateDialUI(){
-  const a = dirAngle;
-  const rad = a * Math.PI / 180;
-  // Dot-Position am Rand des Kreises (Radius ~18px von Mitte bei 52px Dial)
-  const r = 17;
-  const cx = 26, cy = 26; // Mitte des 52px Kreises
-  const dotX = cx + r * Math.cos(rad) - 2.5; // -2.5 = halbe Dot-Breite
-  const dotY = cy + r * Math.sin(rad) - 2.5;
-  dialDot.style.left = dotX + 'px';
-  dialDot.style.top  = dotY + 'px';
-  dialDot.style.margin = '0';
-  dialDot.style.transform = 'none';
-
-  // Nächste Richtungsbezeichnung
-  const idx = Math.round(((a % 360) + 360) % 360 / 45) % 8;
-  dialName.textContent = DIR_STEPS[idx].sym + ' ' + DIR_STEPS[idx].lbl;
+  // Nadel: 0° = rechts → Nadel muss 90° nach rechts drehen von 12-Uhr-Position
+  dialNeedle.style.transform = `rotate(${dirAngle + 90}deg)`;
+  const idx = Math.round(((dirAngle % 360)+360) % 360 / 15) % 24;
+  const d = DIR_TABLE[idx];
+  g('dialSym').textContent = d.sym;
+  g('dialLbl').textContent = d.lbl;
+  g('dialDeg').textContent = Math.round(dirAngle) + '°';
 }
 
-function setDirAngle(a){
-  dirAngle = ((a % 360) + 360) % 360;
+function setDirAngle(a, snap){
+  let na = ((a % 360) + 360) % 360;
+  if(snap) na = Math.round(na / 15) * 15 % 360;
+  dirAngle = na;
   updateDialUI();
-  render();
+  scheduleRender();
 }
 
-// Drag-Logik
-let dragging = false, lastA = 0;
-function pointerAngle(e){
+// Drag
+let dragging = false, dragLastA = 0;
+function evAngle(e){
   const rect = dial.getBoundingClientRect();
-  const cx = rect.left + rect.width/2;
-  const cy = rect.top  + rect.height/2;
+  const cx = rect.left + rect.width/2, cy = rect.top + rect.height/2;
   const px = e.touches ? e.touches[0].clientX : e.clientX;
   const py = e.touches ? e.touches[0].clientY : e.clientY;
   return Math.atan2(py-cy, px-cx) * 180/Math.PI;
 }
-dial.addEventListener('mousedown',  e=>{ dragging=true; lastA=pointerAngle(e); e.preventDefault(); });
-dial.addEventListener('touchstart', e=>{ dragging=true; lastA=pointerAngle(e); e.preventDefault(); },{passive:false});
+dial.addEventListener('mousedown', e=>{
+  dragging=true; dragLastA=evAngle(e); dial.focus(); e.preventDefault();
+});
+dial.addEventListener('touchstart', e=>{
+  dragging=true; dragLastA=evAngle(e); e.preventDefault();
+},{passive:false});
 window.addEventListener('mousemove', e=>{
   if(!dragging) return;
-  const a = pointerAngle(e);
-  let d = a - lastA;
-  if(d >  180) d -= 360;
-  if(d < -180) d += 360;
-  lastA = a;
-  setDirAngle(dirAngle + d);
+  const a=evAngle(e); let d=a-dragLastA;
+  if(d>180)d-=360; if(d<-180)d+=360;
+  dragLastA=a; setDirAngle(dirAngle+d, false);
 });
 window.addEventListener('touchmove', e=>{
   if(!dragging) return;
-  const a = pointerAngle(e);
-  let d = a - lastA;
-  if(d >  180) d -= 360;
-  if(d < -180) d += 360;
-  lastA = a;
-  setDirAngle(dirAngle + d);
+  const a=evAngle(e); let d=a-dragLastA;
+  if(d>180)d-=360; if(d<-180)d+=360;
+  dragLastA=a; setDirAngle(dirAngle+d, false);
 },{passive:false});
-window.addEventListener('mouseup',  ()=>{ if(dragging){ dragging=false; setDirAngle(Math.round(dirAngle/45)*45); }});
-window.addEventListener('touchend', ()=>{ if(dragging){ dragging=false; setDirAngle(Math.round(dirAngle/45)*45); }});
+window.addEventListener('mouseup',  ()=>{ if(dragging){ dragging=false; setDirAngle(dirAngle,true); }});
+window.addEventListener('touchend', ()=>{ if(dragging){ dragging=false; setDirAngle(dirAngle,true); }});
 
-// ── Slider ────────────────────────────────────────────────────────────────────
+// Cursor-Tasten: ↑ = +15°, ↓ = –15° (auch ←/→)
+dial.addEventListener('keydown', e=>{
+  if(e.key==='ArrowUp'   ||e.key==='ArrowRight'){ setDirAngle(dirAngle+15,true);  e.preventDefault(); }
+  if(e.key==='ArrowDown' ||e.key==='ArrowLeft') { setDirAngle(dirAngle-15,true);  e.preventDefault(); }
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Slider binden
+// ─────────────────────────────────────────────────────────────────────────────
 function bindSlider(id, outId, suffix, dispFn, fn){
   g(id).addEventListener('input', function(){
     const v = +this.value;
@@ -196,19 +264,20 @@ function bindSlider(id, outId, suffix, dispFn, fn){
     if(fn) fn();
   });
 }
-bindSlider('ptSize',   'ptSizeV',   'px', v=>(v/10).toFixed(1), render);
-bindSlider('density',  'densityV',  '',   v=>(v/10).toFixed(1), render);
-bindSlider('ptCount',  'ptCountV',  '%',  null, render);
-bindSlider('spacing',  'spacingV',  'x',  null, render);
-bindSlider('ptAlpha',  'ptAlphaV',  '%',  null, render);
-bindSlider('saturation','saturationV','%',null, render);
-bindSlider('origAlpha','origAlphaV','%',  null, render);
-bindSlider('tailLen',  'tailLenV',  '%',  null, render);
-bindSlider('curl',     'curlV',     '',   null, render);
-bindSlider('spread',   'spreadV',   '',   null, render);
-bindSlider('dissolve', 'dissolveV', '%',  null, render);
+bindSlider('ptSize',    'ptSizeV',    'px', v=>(v/10).toFixed(1), scheduleRender);
+bindSlider('density',   'densityV',   '',   v=>(v/10).toFixed(1), ()=>{ buildPrevDots(); scheduleRender(); });
+bindSlider('ptCount',   'ptCountV',   '%',  null, scheduleRender);
+bindSlider('ptAlpha',   'ptAlphaV',   '%',  null, scheduleRender);
+bindSlider('saturation','saturationV','%',  null, scheduleRender);
+bindSlider('origAlpha', 'origAlphaV', '%',  null, scheduleRender);
+bindSlider('tailLen',   'tailLenV',   '%',  null, scheduleRender);
+bindSlider('curl',      'curlV',      '',   null, scheduleRender);
+bindSlider('spread',    'spreadV',    '',   null, scheduleRender);
+bindSlider('dissolve',  'dissolveV',  '%',  null, scheduleRender);
 
-// ── Bild laden ────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+// Bild laden
+// ─────────────────────────────────────────────────────────────────────────────
 g('fileIn').addEventListener('change', function(){
   if(!this.files[0]) return;
   const r = new FileReader();
@@ -218,7 +287,7 @@ g('fileIn').addEventListener('change', function(){
       srcImg = img;
       g('dz').classList.add('loaded');
       g('dzLbl').textContent = this.files[0].name;
-      buildDots();
+      buildPrevDots();
       render();
     };
     img.src = e.target.result;
@@ -226,7 +295,9 @@ g('fileIn').addEventListener('change', function(){
   r.readAsDataURL(this.files[0]);
 });
 
-// ── Sättigung ─────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+// Hilfsfunktionen
+// ─────────────────────────────────────────────────────────────────────────────
 function adjustSaturation(r, g, b, satPct){
   if(satPct >= 100) return [r, g, b];
   const max=Math.max(r,g,b)/255, min=Math.min(r,g,b)/255;
@@ -239,175 +310,255 @@ function adjustSaturation(r, g, b, satPct){
   ];
 }
 
-// ── Punkte sampeln (in Originalgrösse) ───────────────────────────────────────
-function buildDots(){
+// Vorschau-Skalierung berechnen (max PREV_MAX×PREV_MAX)
+function previewScale(){
+  if(!srcImg) return 1;
+  return Math.min(PREV_MAX/srcImg.width, PREV_MAX/srcImg.height, 1);
+}
+
+// Punkte sampeln — immer auf Vorschau-Grösse
+function buildPrevDots(){
   if(!srcImg) return;
-  const step = densityVal();
-  const sw = srcImg.width, sh = srcImg.height;
+  const sc  = previewScale();
+  const sw  = Math.round(srcImg.width  * sc);
+  const sh  = Math.round(srcImg.height * sc);
+  const step = densityVal() * sc;          // Dichte relativ zur Vorschau
   const offC = document.createElement('canvas');
   offC.width=sw; offC.height=sh;
   const offCtx = offC.getContext('2d');
   offCtx.drawImage(srcImg,0,0,sw,sh);
   const px = offCtx.getImageData(0,0,sw,sh).data;
-  dotData=[];
+  dotDataPrev = [];
   for(let y=step/2; y<sh; y+=step){
     for(let x=step/2; x<sw; x+=step){
       const i=(Math.floor(y)*sw+Math.floor(x))*4;
       if(px[i+3]<10) continue;
-      dotData.push({ nx:x/sw, ny:y/sh, r:px[i], g:px[i+1], b:px[i+2], a:px[i+3] });
+      dotDataPrev.push({ nx:x/sw, ny:y/sh, r:px[i], g:px[i+1], b:px[i+2], a:px[i+3] });
     }
   }
 }
 
-// ── Render ────────────────────────────────────────────────────────────────────
-function render(){
-  if(!srcImg){
-    cv.width=600; cv.height=300;
-    ctx.fillStyle='#111'; ctx.fillRect(0,0,600,300);
-    ctx.fillStyle='#444'; ctx.font='14px system-ui'; ctx.textAlign='center';
-    ctx.fillText('Bitte ein Foto laden',300,155);
-    return;
-  }
-  buildDots();
+// ─────────────────────────────────────────────────────────────────────────────
+// Kern-Zeichenfunktion — arbeitet auf beliebiger Grösse
+// dotData: Array aus {nx,ny,r,g,b,a}
+// imgW/imgH: Bildgrösse in Pixeln (Vorschau oder Original)
+// scaleFactor: Punktgrösse / Abstände entsprechend skalieren
+// targetCanvas + targetCtx
+// ─────────────────────────────────────────────────────────────────────────────
+function drawPointCloud(dotArr, imgW, imgH, scaleFactor, tCanvas, tCtx, params){
+  const {ptSize, ptAlpha, curl, spread, dissolve, satPct,
+         origAlpha, ptCountPct, tailLen, dx, dy} = params;
 
-  const srcW = srcImg.width, srcH = srcImg.height;
-  const tailLen   = +g('tailLen').value/100;
-  const angleRad  = dirAngle * Math.PI / 180;
-  const dx = Math.cos(angleRad);
-  const dy = Math.sin(angleRad);
-  const tailPx = Math.max(srcW, srcH) * tailLen;
-
-  // Canvas-Grösse = Originalbild + Rauchfahnen-Ausdehnung
+  const tailPx    = Math.max(imgW, imgH) * tailLen;
   const padRight  = dx > 0 ? tailPx*dx : 0;
   const padLeft   = dx < 0 ? tailPx*(-dx) : 0;
   const padBottom = dy > 0 ? tailPx*dy : 0;
   const padTop    = dy < 0 ? tailPx*(-dy) : 0;
 
-  const cW = Math.ceil(srcW + padRight + padLeft);
-  const cH = Math.ceil(srcH + padBottom + padTop);
-  cv.width  = cW;
-  cv.height = cH;
+  const cW = Math.ceil(imgW + padRight + padLeft);
+  const cH = Math.ceil(imgH + padBottom + padTop);
+  tCanvas.width  = cW;
+  tCanvas.height = cH;
 
-  ctx.fillStyle='#111'; ctx.fillRect(0,0,cW,cH);
+  tCtx.fillStyle='#111'; tCtx.fillRect(0,0,cW,cH);
 
-  const ptSize      = ptSizeVal();
-  const ptAlpha     = +g('ptAlpha').value/100;
-  const curl        = +g('curl').value;
-  const spread      = +g('spread').value;
-  const dissolve    = +g('dissolve').value/100;
-  const satPct      = +g('saturation').value;
-  const origAlpha   = +g('origAlpha').value/100;
-  const spacingMult = +g('spacing').value;
-  const ptCountPct  = +g('ptCount').value/100;
+  const imgX = padLeft, imgY = padTop;
 
-  const imgX = padLeft;
-  const imgY = padTop;
-
-  // Originalbild-Überlagerung
   if(origAlpha > 0){
-    ctx.globalAlpha = origAlpha;
-    ctx.drawImage(srcImg, imgX, imgY, srcW, srcH);
-    ctx.globalAlpha = 1;
+    tCtx.globalAlpha = origAlpha;
+    tCtx.drawImage(srcImg, imgX, imgY, imgW, imgH);
+    tCtx.globalAlpha = 1;
   }
 
   const STEPS   = 20;
-  const minDist = ptSize * spacingMult;
-  const placed  = [];
+  const ptR     = (ptSize/2) * scaleFactor;
+  const perpX   = -dy, perpY = dx;
 
-  // Punkteanzahl (zufällige Auswahl)
-  let dots = dotData;
+  let dots = dotArr;
   if(ptCountPct < 1){
-    const count = Math.round(dotData.length * ptCountPct);
-    const arr = dotData.slice();
-    for(let i=arr.length-1; i>0; i--){
-      const j = Math.floor(Math.random()*(i+1));
-      [arr[i],arr[j]] = [arr[j],arr[i]];
+    const count = Math.round(dotArr.length * ptCountPct);
+    const arr = dotArr.slice();
+    for(let i=arr.length-1;i>0;i--){
+      const j=Math.floor(Math.random()*(i+1));
+      [arr[i],arr[j]]=[arr[j],arr[i]];
     }
-    dots = arr.slice(0,count);
+    dots = arr.slice(0, count);
   }
 
-  // Senkrecht zur Richtung
-  const perpX = -dy, perpY = dx;
-
   dots.forEach(d=>{
-    const px = imgX + d.nx*srcW;
-    const py = imgY + d.ny*srcH;
+    const px = imgX + d.nx*imgW;
+    const py = imgY + d.ny*imgH;
 
-    if(minDist > 0){
-      for(let p=0; p<placed.length; p++){
-        const ddx=placed[p][0]-px, ddy=placed[p][1]-py;
-        if(ddx*ddx+ddy*ddy < minDist*minDist) return;
-      }
-      placed.push([px,py]);
     }
 
     const [sr,sg,sb] = adjustSaturation(d.r, d.g, d.b, satPct);
 
-    ctx.beginPath();
-    ctx.arc(px, py, ptSize/2, 0, Math.PI*2);
-    ctx.fillStyle=`rgba(${sr},${sg},${sb},${ptAlpha*d.a/255})`;
-    ctx.fill();
+    tCtx.beginPath();
+    tCtx.arc(px, py, Math.max(0.3, ptR), 0, Math.PI*2);
+    tCtx.fillStyle=`rgba(${sr},${sg},${sb},${ptAlpha*d.a/255})`;
+    tCtx.fill();
 
     if(tailLen<=0) return;
 
-    for(let s=1; s<=STEPS; s++){
-      const t = s/STEPS;
-      const noise  = (Math.random()-0.5)*spread*t*2;
-      const curlOff = curl*t*t;
-      const dist = t*tailPx;
+    for(let s=1;s<=STEPS;s++){
+      const t=s/STEPS;
+      const noise   = (Math.random()-0.5)*spread*scaleFactor*t*2;
+      const curlOff = curl*scaleFactor*t*t;
+      const dist    = t*tailPx;
 
       const tx = px + dx*dist + perpX*(curlOff+noise);
       const ty = py + dy*dist + perpY*(curlOff+noise);
 
       const alpha = ptAlpha*(d.a/255)*Math.pow(1-t,1.2)*(1-dissolve*t*0.9);
       if(alpha<=0.01) continue;
-      const sz = Math.max(0.3,(ptSize/2)*(1-t*dissolve*0.7));
+      const sz = Math.max(0.3, ptR*(1-t*dissolve*0.7));
 
-      ctx.beginPath();
-      ctx.arc(tx, ty, sz, 0, Math.PI*2);
-      ctx.fillStyle=`rgba(${sr},${sg},${sb},${Math.min(1,alpha)})`;
-      ctx.fill();
+      tCtx.beginPath();
+      tCtx.arc(tx, ty, sz, 0, Math.PI*2);
+      tCtx.fillStyle=`rgba(${sr},${sg},${sb},${Math.min(1,alpha)})`;
+      tCtx.fill();
     }
   });
 }
 
-g('reBtn').addEventListener('click', render);
+// ─────────────────────────────────────────────────────────────────────────────
+// Vorschau rendern (debounced)
+// ─────────────────────────────────────────────────────────────────────────────
+function scheduleRender(){
+  clearTimeout(renderTimer);
+  renderTimer = setTimeout(render, 30);
+}
 
-// ── Speichern als JPG ──────────────────────────────────────────────────────
-g('dlBtn').addEventListener('click', ()=>{
+function render(){
+  if(!srcImg){
+    cv.width=600; cv.height=300;
+    ctx.fillStyle='#111'; ctx.fillRect(0,0,600,300);
+    ctx.fillStyle='#444'; ctx.font='14px system-ui'; ctx.textAlign='center';
+    ctx.fillText('Bitte ein Foto laden',300,155);
+    g('prevBadge').textContent='';
+    return;
+  }
+
+  const sc   = previewScale();
+  const prevW = Math.round(srcImg.width  * sc);
+  const prevH = Math.round(srcImg.height * sc);
+  const angleRad = dirAngle * Math.PI / 180;
+
+  const params = {
+    ptSize:      ptSizeVal() * sc,
+    ptAlpha:     +g('ptAlpha').value/100,
+    curl:        +g('curl').value,
+    spread:      +g('spread').value,
+    dissolve:    +g('dissolve').value/100,
+    satPct:      +g('saturation').value,
+    origAlpha:   +g('origAlpha').value/100,
+    
+    ptCountPct:  +g('ptCount').value/100,
+    tailLen:     +g('tailLen').value/100,
+    dx: Math.cos(angleRad),
+    dy: Math.sin(angleRad),
+  };
+
+  drawPointCloud(dotDataPrev, prevW, prevH, sc, cv, ctx, params);
+
+  // Badge: Vorschaugrösse anzeigen
+  const badge = srcImg.width > PREV_MAX || srcImg.height > PREV_MAX
+    ? `Vorschau ${prevW}×${prevH} px (Original: ${srcImg.width}×${srcImg.height})`
+    : `${prevW}×${prevH} px`;
+  g('prevBadge').textContent = badge;
+}
+
+g('reBtn').addEventListener('click', ()=>{ buildPrevDots(); render(); });
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Speichern — in ORIGINALGRÖSSE rendern
+// ─────────────────────────────────────────────────────────────────────────────
+g('dlBtn').addEventListener('click', async ()=>{
   if(!srcImg) return;
-  const baseName = lastSaveName.replace(/_\d+$/, '');
-  const suggested = baseName + '_' + String(saveIdx).padStart(3,'0');
 
-  if(window.showSaveFilePicker){
-    window.showSaveFilePicker({
-      suggestedName: suggested+'.jpg',
-      types:[{description:'JPEG Bild',accept:{'image/jpeg':['.jpg','.jpeg']}}]
-    }).then(async handle=>{
-      const writable = await handle.createWritable();
-      cv.toBlob(async blob=>{
+  g('dlBtn').disabled = true;
+  g('saveInfo').textContent = 'Wird berechnet …';
+
+  // Kurze Pause damit UI aktualisiert
+  await new Promise(r=>setTimeout(r,30));
+
+  // Punkte in Originalgrösse sampeln
+  const step = densityVal();
+  const oW = srcImg.width, oH = srcImg.height;
+  const offC = document.createElement('canvas');
+  offC.width=oW; offC.height=oH;
+  const offCtx = offC.getContext('2d');
+  offCtx.drawImage(srcImg,0,0,oW,oH);
+  const pxData = offCtx.getImageData(0,0,oW,oH).data;
+  const origDots = [];
+  for(let y=step/2; y<oH; y+=step){
+    for(let x=step/2; x<oW; x+=step){
+      const i=(Math.floor(y)*oW+Math.floor(x))*4;
+      if(pxData[i+3]<10) continue;
+      origDots.push({ nx:x/oW, ny:y/oH, r:pxData[i], g:pxData[i+1], b:pxData[i+2], a:pxData[i+3] });
+    }
+  }
+
+  // Ausgabe-Canvas
+  const expCanvas = document.createElement('canvas');
+  const expCtx    = expCanvas.getContext('2d');
+  const angleRad  = dirAngle * Math.PI / 180;
+
+  const params = {
+    ptSize:      ptSizeVal(),   // Originalgrösse, kein sc
+    ptAlpha:     +g('ptAlpha').value/100,
+    curl:        +g('curl').value,
+    spread:      +g('spread').value,
+    dissolve:    +g('dissolve').value/100,
+    satPct:      +g('saturation').value,
+    origAlpha:   +g('origAlpha').value/100,
+    
+    ptCountPct:  +g('ptCount').value/100,
+    tailLen:     +g('tailLen').value/100,
+    dx: Math.cos(angleRad),
+    dy: Math.sin(angleRad),
+  };
+
+  drawPointCloud(origDots, oW, oH, 1, expCanvas, expCtx, params);
+
+  const baseName    = lastSaveName.replace(/_\d+$/, '');
+  const suggested   = baseName + '_' + String(saveIdx).padStart(3,'0');
+
+  const doSave = (blob) => {
+    if(window.showSaveFilePicker){
+      window.showSaveFilePicker({
+        suggestedName: suggested+'.jpg',
+        types:[{description:'JPEG Bild',accept:{'image/jpeg':['.jpg','.jpeg']}}]
+      }).then(async handle=>{
+        const writable = await handle.createWritable();
         await writable.write(blob);
         await writable.close();
         const sn = handle.name.replace(/\.[^.]+$/,'');
-        lastSaveName=sn;
-        localStorage.setItem('punktwolke_lastSaveName',sn);
-        g('saveInfo').textContent='Gespeichert: '+handle.name;
+        lastSaveName=sn; localStorage.setItem('punktwolke_lastSaveName',sn);
+        g('saveInfo').textContent=`Gespeichert: ${handle.name}  (${expCanvas.width}×${expCanvas.height} px)`;
         saveIdx++;
-      },'image/jpeg',0.93);
-    }).catch(()=>{});
-  } else {
-    const name = suggested+'.jpg';
-    const a = document.createElement('a');
-    a.download=name; a.href=cv.toDataURL('image/jpeg',0.93); a.click();
-    lastSaveName=baseName;
-    localStorage.setItem('punktwolke_lastSaveName',baseName);
-    g('saveInfo').textContent='Gespeichert: '+name;
-    saveIdx++;
-  }
+      }).catch(()=>{
+        g('saveInfo').textContent='Speichern abgebrochen.';
+      }).finally(()=>{ g('dlBtn').disabled=false; });
+    } else {
+      const url = URL.createObjectURL(blob);
+      const a   = document.createElement('a');
+      a.download = suggested+'.jpg'; a.href=url; a.click();
+      setTimeout(()=>URL.revokeObjectURL(url),1000);
+      lastSaveName=baseName; localStorage.setItem('punktwolke_lastSaveName',baseName);
+      g('saveInfo').textContent=`Gespeichert: ${suggested}.jpg  (${expCanvas.width}×${expCanvas.height} px)`;
+      saveIdx++;
+      g('dlBtn').disabled=false;
+    }
+  };
+
+  expCanvas.toBlob(doSave, 'image/jpeg', 0.93);
 });
 
+// ─────────────────────────────────────────────────────────────────────────────
 // Init
-setDirAngle(0);
+// ─────────────────────────────────────────────────────────────────────────────
+setDirAngle(0, true);
 render();
 
 if('serviceWorker' in navigator){
