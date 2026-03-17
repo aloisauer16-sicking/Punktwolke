@@ -6,12 +6,13 @@
 <meta name="theme-color" content="#111111">
 <meta name="description" content="Foto in Punktwolke mit Rauchfahne verwandeln">
 <link rel="manifest" href="manifest.json">
-<title>Punktwolke AA2</title>
+<title>Punktwolke 02</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:system-ui,sans-serif;background:#1a1a1a;color:#eee;min-height:100vh;}
-header{background:#111;padding:12px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #333;}
-header h1{font-size:16px;font-weight:500;color:#fff;}
+header{background:#111;padding:10px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #333;}
+header h1{font-size:13px;font-weight:500;color:#fff;letter-spacing:.01em;}
+header .copy{font-size:10px;color:#555;margin-left:auto;white-space:nowrap;}
 .main{padding:12px;max-width:800px;margin:0 auto;}
 .dz{border:2px dashed #444;border-radius:12px;padding:20px;text-align:center;cursor:pointer;background:#222;position:relative;margin-bottom:12px;transition:border-color .2s;}
 .dz:hover{border-color:#888;}
@@ -24,9 +25,17 @@ header h1{font-size:16px;font-weight:500;color:#fff;}
 .cr label{font-size:12px;color:#aaa;min-width:130px;}
 .cr input[type=range]{flex:1;accent-color:#fff;}
 .cr .val{font-size:12px;font-weight:600;min-width:52px;text-align:right;color:#fff;}
-.cr select{flex:1;font-size:12px;padding:4px 8px;border-radius:6px;border:1px solid #444;background:#333;color:#eee;}
+/* Drehregler */
+.dir-row{display:flex;align-items:center;gap:8px;}
+.dir-row > label{font-size:12px;color:#aaa;min-width:130px;}
+.dial-wrap{display:flex;align-items:center;gap:10px;flex:1;}
+.dial{width:52px;height:52px;border-radius:50%;background:#2a2a2a;border:2px solid #555;position:relative;cursor:grab;touch-action:none;user-select:none;flex-shrink:0;}
+.dial:active{cursor:grabbing;border-color:#888;}
+.dial-inner{position:absolute;inset:5px;border-radius:50%;border:1px solid #3a3a3a;}
+.dial-dot{position:absolute;width:5px;height:5px;background:#fff;border-radius:50%;top:50%;left:50%;margin:-2.5px -2.5px;transform-origin:center center;}
+.dial-name{font-size:12px;color:#fff;font-weight:600;}
 .canvas-wrap{border-radius:12px;overflow:hidden;background:#111;margin-bottom:10px;}
-canvas{display:block;width:100%;background:#111;}
+canvas{display:block;width:100%;height:auto;background:#111;}
 .btn-row{display:flex;gap:8px;flex-wrap:wrap;}
 button{font-size:13px;padding:10px 18px;border-radius:8px;border:1px solid #444;background:#333;color:#eee;cursor:pointer;font-weight:500;}
 button:hover{background:#444;}
@@ -37,7 +46,7 @@ button.primary:hover{background:#ddd;}
 </head>
 <body>
 <header>
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
     <circle cx="6" cy="6" r="3" fill="#fff"/>
     <circle cx="14" cy="5" r="2" fill="#fff" opacity=".7"/>
     <circle cx="9" cy="13" r="2.5" fill="#fff" opacity=".8"/>
@@ -45,7 +54,8 @@ button.primary:hover{background:#ddd;}
     <circle cx="4" cy="17" r="2" fill="#fff" opacity=".4"/>
     <circle cx="20" cy="18" r="1" fill="#fff" opacity=".3"/>
   </svg>
-  <h1>Punktwolke AA2</h1>
+  <h1>Punktwolke 02</h1>
+  <span class="copy">© Alois Auer – 2026</span>
 </header>
 
 <div class="main">
@@ -56,28 +66,26 @@ button.primary:hover{background:#ddd;}
 
   <div class="controls">
     <div class="sec">PUNKTE</div>
-    <!-- Punktgrösse: 0.1x bis 20px, Faktor 0.1–10 relativ zur Dichte -->
     <div class="cr"><label>Punktgrösse</label><input type="range" id="ptSize" min="1" max="200" value="60" step="1"><span class="val" id="ptSizeV">6.0px</span></div>
-    <!-- Punktdichte: Schrittweite 0.1 (sehr dicht) bis 30 (locker) -->
     <div class="cr"><label>Punktdichte</label><input type="range" id="density" min="1" max="300" value="80" step="1"><span class="val" id="densityV">8.0</span></div>
-    <!-- Punktabstand: 0–100x Punktgrösse als Mindestabstand -->
+    <div class="cr"><label>Punkteanzahl</label><input type="range" id="ptCount" min="0" max="100" value="100" step="1"><span class="val" id="ptCountV">100%</span></div>
     <div class="cr"><label>Mindestabstand</label><input type="range" id="spacing" min="0" max="100" value="0" step="1"><span class="val" id="spacingV">0x</span></div>
     <div class="cr"><label>Transparenz</label><input type="range" id="ptAlpha" min="10" max="100" value="90" step="1"><span class="val" id="ptAlphaV">90%</span></div>
-    <!-- Farbsättigung 0=graustufen, 100=original -->
     <div class="cr"><label>Farbsättigung</label><input type="range" id="saturation" min="0" max="100" value="100" step="1"><span class="val" id="saturationV">100%</span></div>
 
     <div class="sec">ORIGINALBILD</div>
-    <!-- Überlagerung des Originalbilds mit wählbarer Transparenz -->
     <div class="cr"><label>Überlagerung</label><input type="range" id="origAlpha" min="0" max="100" value="0" step="1"><span class="val" id="origAlphaV">0%</span></div>
 
     <div class="sec">RAUCHFAHNE</div>
-    <div class="cr"><label>Richtung</label>
-      <select id="dir">
-        <option value="right">rechts</option>
-        <option value="left">links</option>
-        <option value="up">oben</option>
-        <option value="down">unten</option>
-      </select>
+    <div class="dir-row">
+      <label>Richtung</label>
+      <div class="dial-wrap">
+        <div class="dial" id="dirDial" title="Ziehen zum Drehen · Doppelklick zum Einrasten">
+          <div class="dial-inner"></div>
+          <div class="dial-dot" id="dialDot"></div>
+        </div>
+        <span class="dial-name" id="dialName">→ rechts</span>
+      </div>
     </div>
     <div class="cr"><label>Länge</label><input type="range" id="tailLen" min="0" max="150" value="60" step="1"><span class="val" id="tailLenV">60%</span></div>
     <div class="cr"><label>Schwung</label><input type="range" id="curl" min="-80" max="80" value="25" step="1"><span class="val" id="curlV">25</span></div>
@@ -98,39 +106,109 @@ button.primary:hover{background:#ddd;}
 
 <script>
 let srcImg=null, dotData=[], saveIdx=1;
-// Letzten Dateinamen aus localStorage laden (merkt sich Speicherort/Name)
 let lastSaveName = localStorage.getItem('punktwolke_lastSaveName') || 'punktwolke';
+let dirAngle = 0; // Grad, 0=rechts, 90=unten, 180=links, 270=oben
 
-const cv = document.getElementById('cv');
+const cv  = document.getElementById('cv');
 const ctx = cv.getContext('2d');
-
 function g(id){ return document.getElementById(id); }
-
-// Punktgrösse: Slider 1–200 → Wert 0.1px bis 20px (÷10)
 function ptSizeVal(){ return +g('ptSize').value / 10; }
-// Punktdichte: Slider 1–300 → Schrittweite 0.1 bis 30 (÷10)
 function densityVal(){ return +g('density').value / 10; }
 
-function bindSlider(id, outId, suffix, displayFn, fn){
+// ── Drehregler ──────────────────────────────────────────────────────────────
+const dial     = g('dirDial');
+const dialDot  = g('dialDot');
+const dialName = g('dialName');
+
+const DIR_STEPS = [
+  {a:0,   sym:'→', lbl:'rechts'},
+  {a:45,  sym:'↘', lbl:'rechts-unten'},
+  {a:90,  sym:'↓', lbl:'unten'},
+  {a:135, sym:'↙', lbl:'links-unten'},
+  {a:180, sym:'←', lbl:'links'},
+  {a:225, sym:'↖', lbl:'links-oben'},
+  {a:270, sym:'↑', lbl:'oben'},
+  {a:315, sym:'↗', lbl:'rechts-oben'},
+];
+
+function updateDialUI(){
+  const a = dirAngle;
+  const rad = a * Math.PI / 180;
+  // Dot-Position am Rand des Kreises (Radius ~18px von Mitte bei 52px Dial)
+  const r = 17;
+  const cx = 26, cy = 26; // Mitte des 52px Kreises
+  const dotX = cx + r * Math.cos(rad) - 2.5; // -2.5 = halbe Dot-Breite
+  const dotY = cy + r * Math.sin(rad) - 2.5;
+  dialDot.style.left = dotX + 'px';
+  dialDot.style.top  = dotY + 'px';
+  dialDot.style.margin = '0';
+  dialDot.style.transform = 'none';
+
+  // Nächste Richtungsbezeichnung
+  const idx = Math.round(((a % 360) + 360) % 360 / 45) % 8;
+  dialName.textContent = DIR_STEPS[idx].sym + ' ' + DIR_STEPS[idx].lbl;
+}
+
+function setDirAngle(a){
+  dirAngle = ((a % 360) + 360) % 360;
+  updateDialUI();
+  render();
+}
+
+// Drag-Logik
+let dragging = false, lastA = 0;
+function pointerAngle(e){
+  const rect = dial.getBoundingClientRect();
+  const cx = rect.left + rect.width/2;
+  const cy = rect.top  + rect.height/2;
+  const px = e.touches ? e.touches[0].clientX : e.clientX;
+  const py = e.touches ? e.touches[0].clientY : e.clientY;
+  return Math.atan2(py-cy, px-cx) * 180/Math.PI;
+}
+dial.addEventListener('mousedown',  e=>{ dragging=true; lastA=pointerAngle(e); e.preventDefault(); });
+dial.addEventListener('touchstart', e=>{ dragging=true; lastA=pointerAngle(e); e.preventDefault(); },{passive:false});
+window.addEventListener('mousemove', e=>{
+  if(!dragging) return;
+  const a = pointerAngle(e);
+  let d = a - lastA;
+  if(d >  180) d -= 360;
+  if(d < -180) d += 360;
+  lastA = a;
+  setDirAngle(dirAngle + d);
+});
+window.addEventListener('touchmove', e=>{
+  if(!dragging) return;
+  const a = pointerAngle(e);
+  let d = a - lastA;
+  if(d >  180) d -= 360;
+  if(d < -180) d += 360;
+  lastA = a;
+  setDirAngle(dirAngle + d);
+},{passive:false});
+window.addEventListener('mouseup',  ()=>{ if(dragging){ dragging=false; setDirAngle(Math.round(dirAngle/45)*45); }});
+window.addEventListener('touchend', ()=>{ if(dragging){ dragging=false; setDirAngle(Math.round(dirAngle/45)*45); }});
+
+// ── Slider ────────────────────────────────────────────────────────────────────
+function bindSlider(id, outId, suffix, dispFn, fn){
   g(id).addEventListener('input', function(){
-    const raw = +this.value;
-    g(outId).textContent = (displayFn ? displayFn(raw) : Math.round(raw)) + suffix;
+    const v = +this.value;
+    g(outId).textContent = (dispFn ? dispFn(v) : Math.round(v)) + suffix;
     if(fn) fn();
   });
 }
+bindSlider('ptSize',   'ptSizeV',   'px', v=>(v/10).toFixed(1), render);
+bindSlider('density',  'densityV',  '',   v=>(v/10).toFixed(1), render);
+bindSlider('ptCount',  'ptCountV',  '%',  null, render);
+bindSlider('spacing',  'spacingV',  'x',  null, render);
+bindSlider('ptAlpha',  'ptAlphaV',  '%',  null, render);
+bindSlider('saturation','saturationV','%',null, render);
+bindSlider('origAlpha','origAlphaV','%',  null, render);
+bindSlider('tailLen',  'tailLenV',  '%',  null, render);
+bindSlider('curl',     'curlV',     '',   null, render);
+bindSlider('spread',   'spreadV',   '',   null, render);
+bindSlider('dissolve', 'dissolveV', '%',  null, render);
 
-bindSlider('ptSize','ptSizeV','px', v=>(v/10).toFixed(1), render);
-bindSlider('density','densityV','', v=>(v/10).toFixed(1), render);
-bindSlider('spacing','spacingV','x', null, render);
-bindSlider('ptAlpha','ptAlphaV','%', null, render);
-bindSlider('saturation','saturationV','%', null, render);
-bindSlider('origAlpha','origAlphaV','%', null, render);
-bindSlider('tailLen','tailLenV','%', null, render);
-bindSlider('curl','curlV','', null, render);
-bindSlider('spread','spreadV','', null, render);
-bindSlider('dissolve','dissolveV','%', null, render);
-g('dir').addEventListener('change', render);
-
+// ── Bild laden ────────────────────────────────────────────────────────────────
 g('fileIn').addEventListener('change', function(){
   if(!this.files[0]) return;
   const r = new FileReader();
@@ -148,48 +226,40 @@ g('fileIn').addEventListener('change', function(){
   r.readAsDataURL(this.files[0]);
 });
 
-// Sättigung: RGB → HSL → angepasste Sättigung → zurück zu RGB
+// ── Sättigung ─────────────────────────────────────────────────────────────────
 function adjustSaturation(r, g, b, satPct){
   if(satPct >= 100) return [r, g, b];
-  // RGB 0-255 → 0-1
-  const rn=r/255, gn=g/255, bn=b/255;
-  const max=Math.max(rn,gn,bn), min=Math.min(rn,gn,bn);
-  const l=(max+min)/2;
-  // Graustufe
-  const gray = Math.round(l*255);
+  const max=Math.max(r,g,b)/255, min=Math.min(r,g,b)/255;
+  const gray = Math.round(((max+min)/2)*255);
   const f = satPct/100;
   return [
-    Math.round(gray + (r-gray)*f),
-    Math.round(gray + (g-gray)*f),
-    Math.round(gray + (b-gray)*f)
+    Math.round(gray+(r-gray)*f),
+    Math.round(gray+(g-gray)*f),
+    Math.round(gray+(b-gray)*f)
   ];
 }
 
+// ── Punkte sampeln (in Originalgrösse) ───────────────────────────────────────
 function buildDots(){
   if(!srcImg) return;
   const step = densityVal();
-  const maxW=600, maxH=500;
-  let sw=srcImg.width, sh=srcImg.height;
-  const scale=Math.min(maxW/sw, maxH/sh, 1);
-  sw=Math.round(sw*scale); sh=Math.round(sh*scale);
-  const offC=document.createElement('canvas');
+  const sw = srcImg.width, sh = srcImg.height;
+  const offC = document.createElement('canvas');
   offC.width=sw; offC.height=sh;
-  const offCtx=offC.getContext('2d');
+  const offCtx = offC.getContext('2d');
   offCtx.drawImage(srcImg,0,0,sw,sh);
-  const imgData=offCtx.getImageData(0,0,sw,sh).data;
+  const px = offCtx.getImageData(0,0,sw,sh).data;
   dotData=[];
   for(let y=step/2; y<sh; y+=step){
     for(let x=step/2; x<sw; x+=step){
       const i=(Math.floor(y)*sw+Math.floor(x))*4;
-      if(imgData[i+3]<10) continue;
-      dotData.push({
-        nx:x/sw, ny:y/sh,
-        r:imgData[i], g:imgData[i+1], b:imgData[i+2], a:imgData[i+3]
-      });
+      if(px[i+3]<10) continue;
+      dotData.push({ nx:x/sw, ny:y/sh, r:px[i], g:px[i+1], b:px[i+2], a:px[i+3] });
     }
   }
 }
 
+// ── Render ────────────────────────────────────────────────────────────────────
 function render(){
   if(!srcImg){
     cv.width=600; cv.height=300;
@@ -200,58 +270,73 @@ function render(){
   }
   buildDots();
 
-  const W = cv.offsetWidth || 600;
-  const srcW=srcImg.width, srcH=srcImg.height;
-  const imgScale=Math.min(W*0.58/srcW, 480/srcH, 1);
-  const iW=srcW*imgScale, iH=srcH*imgScale;
-  const dir=g('dir').value;
-  const tailLen=+g('tailLen').value/100;
-  const extraW=(dir==='left'||dir==='right')?W*tailLen*0.5:0;
-  const extraH=(dir==='up'||dir==='down')?iH*tailLen*0.8:0;
-  cv.width=W;
-  cv.height=Math.max(iH+extraH+40,200);
-  const H=cv.height;
+  const srcW = srcImg.width, srcH = srcImg.height;
+  const tailLen   = +g('tailLen').value/100;
+  const angleRad  = dirAngle * Math.PI / 180;
+  const dx = Math.cos(angleRad);
+  const dy = Math.sin(angleRad);
+  const tailPx = Math.max(srcW, srcH) * tailLen;
 
-  ctx.fillStyle='#111'; ctx.fillRect(0,0,W,H);
+  // Canvas-Grösse = Originalbild + Rauchfahnen-Ausdehnung
+  const padRight  = dx > 0 ? tailPx*dx : 0;
+  const padLeft   = dx < 0 ? tailPx*(-dx) : 0;
+  const padBottom = dy > 0 ? tailPx*dy : 0;
+  const padTop    = dy < 0 ? tailPx*(-dy) : 0;
 
-  const ptSize    = ptSizeVal();
-  const ptAlpha   = +g('ptAlpha').value/100;
-  const curl      = +g('curl').value;
-  const spread    = +g('spread').value;
-  const dissolve  = +g('dissolve').value/100;
-  const satPct    = +g('saturation').value;
-  const origAlpha = +g('origAlpha').value/100;
-  const spacingMult = +g('spacing').value; // 0–100x ptSize als Mindestabstand
+  const cW = Math.ceil(srcW + padRight + padLeft);
+  const cH = Math.ceil(srcH + padBottom + padTop);
+  cv.width  = cW;
+  cv.height = cH;
 
-  let imgX, imgY;
-  if(dir==='right'){imgX=(W-iW)*0.2; imgY=(H-iH)/2;}
-  else if(dir==='left'){imgX=(W-iW)*0.8; imgY=(H-iH)/2;}
-  else if(dir==='up'){imgX=(W-iW)/2; imgY=H-iH-10;}
-  else{imgX=(W-iW)/2; imgY=10;}
+  ctx.fillStyle='#111'; ctx.fillRect(0,0,cW,cH);
 
-  // 1. Originalbild als Überlagerung (unter den Punkten)
+  const ptSize      = ptSizeVal();
+  const ptAlpha     = +g('ptAlpha').value/100;
+  const curl        = +g('curl').value;
+  const spread      = +g('spread').value;
+  const dissolve    = +g('dissolve').value/100;
+  const satPct      = +g('saturation').value;
+  const origAlpha   = +g('origAlpha').value/100;
+  const spacingMult = +g('spacing').value;
+  const ptCountPct  = +g('ptCount').value/100;
+
+  const imgX = padLeft;
+  const imgY = padTop;
+
+  // Originalbild-Überlagerung
   if(origAlpha > 0){
     ctx.globalAlpha = origAlpha;
-    ctx.drawImage(srcImg, imgX, imgY, iW, iH);
+    ctx.drawImage(srcImg, imgX, imgY, srcW, srcH);
     ctx.globalAlpha = 1;
   }
 
-  const STEPS = 20;
-  const minDist = ptSize * spacingMult; // Mindestabstand in Pixeln
+  const STEPS   = 20;
+  const minDist = ptSize * spacingMult;
+  const placed  = [];
 
-  // Für Mindestabstand: bereits gezeichnete Punktpositionen merken
-  // (nur Hauptpunkte, nicht Rauchfahne)
-  const placed = [];
+  // Punkteanzahl (zufällige Auswahl)
+  let dots = dotData;
+  if(ptCountPct < 1){
+    const count = Math.round(dotData.length * ptCountPct);
+    const arr = dotData.slice();
+    for(let i=arr.length-1; i>0; i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [arr[i],arr[j]] = [arr[j],arr[i]];
+    }
+    dots = arr.slice(0,count);
+  }
 
-  dotData.forEach(d => {
-    const px = imgX + d.nx*iW;
-    const py = imgY + d.ny*iH;
+  // Senkrecht zur Richtung
+  const perpX = -dy, perpY = dx;
 
-    // Mindestabstand prüfen
+  dots.forEach(d=>{
+    const px = imgX + d.nx*srcW;
+    const py = imgY + d.ny*srcH;
+
     if(minDist > 0){
       for(let p=0; p<placed.length; p++){
-        const dx=placed[p][0]-px, dy=placed[p][1]-py;
-        if(dx*dx+dy*dy < minDist*minDist) return;
+        const ddx=placed[p][0]-px, ddy=placed[p][1]-py;
+        if(ddx*ddx+ddy*ddy < minDist*minDist) return;
       }
       placed.push([px,py]);
     }
@@ -267,20 +352,16 @@ function render(){
 
     for(let s=1; s<=STEPS; s++){
       const t = s/STEPS;
-      const noiseX = (Math.random()-0.5)*spread*t*2;
-      const noiseY = (Math.random()-0.5)*spread*t*2;
+      const noise  = (Math.random()-0.5)*spread*t*2;
       const curlOff = curl*t*t;
-      const dist = t*Math.max(iW,iH)*tailLen;
+      const dist = t*tailPx;
 
-      let tx=px, ty=py;
-      if(dir==='right'){tx=px+dist; ty=py+curlOff+noiseY;}
-      else if(dir==='left'){tx=px-dist; ty=py+curlOff+noiseY;}
-      else if(dir==='up'){ty=py-dist; tx=px+curlOff+noiseX;}
-      else{ty=py+dist; tx=px+curlOff+noiseX;}
+      const tx = px + dx*dist + perpX*(curlOff+noise);
+      const ty = py + dy*dist + perpY*(curlOff+noise);
 
-      const alpha=ptAlpha*(d.a/255)*Math.pow(1-t,1.2)*(1-dissolve*t*0.9);
+      const alpha = ptAlpha*(d.a/255)*Math.pow(1-t,1.2)*(1-dissolve*t*0.9);
       if(alpha<=0.01) continue;
-      const sz=Math.max(0.3,(ptSize/2)*(1-t*dissolve*0.7));
+      const sz = Math.max(0.3,(ptSize/2)*(1-t*dissolve*0.7));
 
       ctx.beginPath();
       ctx.arc(tx, ty, sz, 0, Math.PI*2);
@@ -292,45 +373,41 @@ function render(){
 
 g('reBtn').addEventListener('click', render);
 
-// Speichern als JPG, merkt sich letzten Namen
+// ── Speichern als JPG ──────────────────────────────────────────────────────
 g('dlBtn').addEventListener('click', ()=>{
   if(!srcImg) return;
-
-  // Name vorschlagen basierend auf letztem gespeicherten Namen (ohne Nummer)
   const baseName = lastSaveName.replace(/_\d+$/, '');
-  const suggestedName = baseName + '_' + String(saveIdx).padStart(3,'0');
+  const suggested = baseName + '_' + String(saveIdx).padStart(3,'0');
 
-  // showSaveFilePicker falls verfügbar (Chrome Desktop)
   if(window.showSaveFilePicker){
     window.showSaveFilePicker({
-      suggestedName: suggestedName + '.jpg',
-      types:[{description:'JPEG Bild', accept:{'image/jpeg':['.jpg','.jpeg']}}]
-    }).then(async handle => {
+      suggestedName: suggested+'.jpg',
+      types:[{description:'JPEG Bild',accept:{'image/jpeg':['.jpg','.jpeg']}}]
+    }).then(async handle=>{
       const writable = await handle.createWritable();
-      cv.toBlob(async blob => {
+      cv.toBlob(async blob=>{
         await writable.write(blob);
         await writable.close();
-        const savedName = handle.name.replace(/\.[^.]+$/, '');
-        lastSaveName = savedName;
-        localStorage.setItem('punktwolke_lastSaveName', savedName);
-        g('saveInfo').textContent = 'Gespeichert: ' + handle.name;
+        const sn = handle.name.replace(/\.[^.]+$/,'');
+        lastSaveName=sn;
+        localStorage.setItem('punktwolke_lastSaveName',sn);
+        g('saveInfo').textContent='Gespeichert: '+handle.name;
         saveIdx++;
-      }, 'image/jpeg', 0.93);
-    }).catch(()=>{}); // Abbruch ignorieren
+      },'image/jpeg',0.93);
+    }).catch(()=>{});
   } else {
-    // Fallback: normaler Download
-    const name = suggestedName + '.jpg';
+    const name = suggested+'.jpg';
     const a = document.createElement('a');
-    a.download = name;
-    a.href = cv.toDataURL('image/jpeg', 0.93);
-    a.click();
-    lastSaveName = baseName;
-    localStorage.setItem('punktwolke_lastSaveName', baseName);
-    g('saveInfo').textContent = 'Gespeichert: ' + name;
+    a.download=name; a.href=cv.toDataURL('image/jpeg',0.93); a.click();
+    lastSaveName=baseName;
+    localStorage.setItem('punktwolke_lastSaveName',baseName);
+    g('saveInfo').textContent='Gespeichert: '+name;
     saveIdx++;
   }
 });
 
+// Init
+setDirAngle(0);
 render();
 
 if('serviceWorker' in navigator){
