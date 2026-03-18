@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#111111">
 <meta name="description" content="Foto in Punktwolke mit Rauchfahne verwandeln">
 <link rel="manifest" href="manifest.json">
-<title>Punktwolke 03D</title>
+<title>Punktwolke 03E</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:system-ui,sans-serif;background:#1a1a1a;color:#eee;min-height:100vh;}
@@ -65,7 +65,7 @@ button:disabled{opacity:.4;cursor:default;}
     <circle cx="4" cy="17" r="2" fill="#fff" opacity=".4"/>
     <circle cx="20" cy="18" r="1" fill="#fff" opacity=".3"/>
   </svg>
-  <h1>Punktwolke 03D &nbsp;©&thinsp;Alois Auer –&thinsp;2026</h1>
+  <h1>Punktwolke 03E &nbsp;©&thinsp;Alois Auer –&thinsp;2026</h1>
 </header>
 
 <div class="main">
@@ -106,13 +106,6 @@ button:disabled{opacity:.4;cursor:default;}
       <span class="val" id="saturationV">80%</span>
     </div>
 
-    <div class="sec">ORIGINALBILD</div>
-    <div class="cr">
-      <label>Überlagerung</label>
-      <input type="range" id="origAlpha" min="0" max="100" value="0" step="1">
-      <span class="val" id="origAlphaV">0%</span>
-    </div>
-
     <div class="sec">RAUCHFAHNE</div>
     <div class="dir-row">
       <label>Richtung</label>
@@ -126,8 +119,8 @@ button:disabled{opacity:.4;cursor:default;}
           <span class="dial-deg" id="dialDeg">0°</span>
         </div>
         <div class="dir-slider-wrap">
-          <input type="range" id="dirSlider" min="0" max="23" value="0" step="1">
-          <div class="dir-slider-label">← gegen Uhrzeigersinn · im Uhrzeigersinn →</div>
+          <input type="range" id="dirSlider" min="0" max="345" value="345" step="15">
+          <div class="dir-slider-label">0° ←→ 360° gegen Uhrzeigersinn</div>
         </div>
       </div>
     </div>
@@ -165,6 +158,13 @@ button:disabled{opacity:.4;cursor:default;}
       <label>Wolkenbreite Ende</label>
       <input type="range" id="endWidth" min="0" max="100" value="0" step="1">
       <span class="val" id="endWidthV">0%</span>
+    </div>
+
+    <div class="sec">ORIGINALBILD</div>
+    <div class="cr">
+      <label>Überlagerung</label>
+      <input type="range" id="origAlpha" min="0" max="100" value="0" step="1">
+      <span class="val" id="origAlphaV">0%</span>
     </div>
   </div>
 
@@ -308,8 +308,9 @@ function updateDialUI(){
   g('dialSym').textContent=DIR_TABLE[idx].sym;
   g('dialLbl').textContent=DIR_TABLE[idx].lbl;
   g('dialDeg').textContent=dirAngle+'°';
-  const sv=Math.round((360-dirAngle)/15)%24;
-  if(+dirSlider.value!==sv) dirSlider.value=sv;
+  // Slider zeigt CCW-Winkel: ccw = (360 - dirAngle) % 360
+  const ccwVal = (360 - dirAngle) % 360;
+  if(+dirSlider.value !== ccwVal) dirSlider.value = ccwVal;
 }
 
 function setDirAngle(a){
@@ -346,7 +347,10 @@ dial.addEventListener('keydown',e=>{
   if(e.key==='ArrowDown'||e.key==='ArrowLeft') { setDirAngle(dirAngle-15); e.preventDefault(); }
 });
 dirSlider.addEventListener('input',function(){
-  setDirAngle((24-+this.value)%24*15);
+  // Slider zeigt gegen-UZS-Winkel; intern rechnen wir im UZS
+  const ccw = +this.value;
+  const cw  = (360 - ccw) % 360;
+  setDirAngle(cw);
 });
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -607,12 +611,14 @@ function renderCanvas2D(tCtx, tCanvas, dots, imgW, imgH, scaleFactor, params){
   const{w,h,imgX,imgY}=canvasDims(imgW,imgH,tailLen,dx,dy);
   tCanvas.width=w; tCanvas.height=h;
   tCtx.fillStyle='#111'; tCtx.fillRect(0,0,w,h);
+  // Punkte zuerst
+  drawDots2D(tCtx,dots,imgW,imgH,scaleFactor,params,imgX,imgY);
+  // Originalbild DANACH als Überlagerung (zuverlässiger als vorher)
   if(origAlpha>0){
     tCtx.globalAlpha=origAlpha;
     tCtx.drawImage(srcImg,imgX,imgY,imgW,imgH);
     tCtx.globalAlpha=1;
   }
-  drawDots2D(tCtx,dots,imgW,imgH,scaleFactor,params,imgX,imgY);
 }
 
 function renderWebGL(dots, imgW, imgH, scaleFactor, params){
@@ -626,10 +632,12 @@ function renderWebGL(dots, imgW, imgH, scaleFactor, params){
     tmp.width=w; tmp.height=h;
     const t2=tmp.getContext('2d');
     t2.fillStyle='#111'; t2.fillRect(0,0,w,h);
+    // Punkte zuerst
+    drawDots2D(t2,dots,imgW,imgH,scaleFactor,params,imgX,imgY);
+    // Originalbild DANACH drüber
     t2.globalAlpha=origAlpha;
     t2.drawImage(srcImg,imgX,imgY,imgW,imgH);
     t2.globalAlpha=1;
-    drawDots2D(t2,dots,imgW,imgH,scaleFactor,params,imgX,imgY);
     _blitToGL(tmp,w,h);
     return;
   }
@@ -815,7 +823,7 @@ g('dlBtn').addEventListener('click', async ()=>{
 // INIT
 // ═══════════════════════════════════════════════════════════════════════
 initWebGL();
-setDirAngle(15); // 15° als Startrichtung
+setDirAngle(15); // intern 15° CW = 345° gegen UZS
 g('ptSizeV').textContent    ='2 px';
 g('densityV').textContent   ='50%';
 g('ptAlphaV').textContent   ='70%';
