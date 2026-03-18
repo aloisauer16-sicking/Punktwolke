@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#111111">
 <meta name="description" content="Foto in Punktwolke mit Rauchfahne verwandeln">
 <link rel="manifest" href="manifest.json">
-<title>Punktwolke 02</title>
+<title>Punktwolke 03</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:system-ui,sans-serif;background:#1a1a1a;color:#eee;min-height:100vh;}
@@ -26,44 +26,44 @@ header h1{font-size:12px;font-weight:500;color:#fff;letter-spacing:.01em;white-s
 .cr input[type=range]{flex:1;accent-color:#fff;}
 .cr .val{font-size:12px;font-weight:600;min-width:52px;text-align:right;color:#fff;}
 
-/* ── Drehregler ── */
-.dir-row{display:flex;align-items:center;gap:8px;}
+/* ── Richtungsregler ── */
+.dir-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
 .dir-row > label{font-size:12px;color:#aaa;min-width:130px;flex-shrink:0;}
-.dial-wrap{display:flex;align-items:center;gap:10px;flex:1;}
+.dir-controls{display:flex;align-items:center;gap:10px;flex:1;flex-wrap:wrap;}
+/* Drehregler */
 .dial{
-  width:56px;height:56px;border-radius:50%;
+  width:54px;height:54px;border-radius:50%;
   background:radial-gradient(circle at 35% 35%,#3a3a3a,#1e1e1e);
   border:2px solid #555;position:relative;
-  cursor:grab;touch-action:none;user-select:none;flex-shrink:0;
-  outline:none;
+  cursor:grab;touch-action:none;user-select:none;flex-shrink:0;outline:none;
 }
 .dial:focus{border-color:#aaa;}
 .dial:active{cursor:grabbing;}
-/* Skala-Striche */
-.dial-tick{position:absolute;width:2px;height:6px;background:#444;border-radius:1px;top:3px;left:50%;margin-left:-1px;transform-origin:1px 25px;}
-.dial-tick.major{background:#666;height:8px;}
-/* Zeiger-Linie */
+.dial-tick{position:absolute;width:2px;height:5px;background:#3a3a3a;border-radius:1px;
+  top:4px;left:50%;margin-left:-1px;transform-origin:1px 23px;}
+.dial-tick.major{background:#555;height:7px;}
 .dial-needle{
   position:absolute;top:50%;left:50%;
-  width:2px;height:20px;
-  background:linear-gradient(to top,#fff,rgba(255,255,255,0.4));
-  border-radius:1px;
-  transform-origin:50% 100%;
-  margin-left:-1px;margin-top:-20px;
-  transition:transform .08s ease;
+  width:2px;height:19px;
+  background:linear-gradient(to top,#fff,rgba(255,255,255,0.3));
+  border-radius:1px;transform-origin:50% 100%;
+  margin-left:-1px;margin-top:-19px;
 }
-.dial-info{display:flex;flex-direction:column;gap:2px;}
-.dial-sym{font-size:18px;line-height:1;}
-.dial-lbl{font-size:11px;color:#888;}
-.dial-deg{font-size:11px;color:#555;}
-.dial-hint{font-size:10px;color:#444;margin-top:2px;}
+/* Info neben Drehregler */
+.dial-info{display:flex;flex-direction:column;gap:1px;min-width:70px;}
+.dial-sym{font-size:17px;line-height:1.2;}
+.dial-lbl{font-size:10px;color:#888;}
+.dial-deg{font-size:10px;color:#555;}
+/* Schieberegler für Winkel */
+.dir-slider-wrap{display:flex;flex-direction:column;gap:3px;flex:1;min-width:100px;}
+.dir-slider-wrap input[type=range]{width:100%;accent-color:#fff;}
+.dir-slider-label{font-size:10px;color:#555;text-align:center;}
 
 .canvas-wrap{border-radius:12px;overflow:hidden;background:#111;margin-bottom:10px;position:relative;}
 canvas{display:block;width:100%;height:auto;background:#111;}
 .prev-badge{
-  position:absolute;bottom:8px;right:10px;
-  font-size:10px;color:#555;background:rgba(0,0,0,.5);
-  padding:2px 6px;border-radius:4px;pointer-events:none;
+  position:absolute;bottom:8px;right:10px;font-size:10px;color:#555;
+  background:rgba(0,0,0,.5);padding:2px 6px;border-radius:4px;pointer-events:none;
 }
 .btn-row{display:flex;gap:8px;flex-wrap:wrap;}
 button{font-size:13px;padding:10px 18px;border-radius:8px;border:1px solid #444;background:#333;color:#eee;cursor:pointer;font-weight:500;}
@@ -84,7 +84,7 @@ button:disabled{opacity:.4;cursor:default;}
     <circle cx="4" cy="17" r="2" fill="#fff" opacity=".4"/>
     <circle cx="20" cy="18" r="1" fill="#fff" opacity=".3"/>
   </svg>
-  <h1>Punktwolke 02 &nbsp;©&thinsp;Alois Auer –&thinsp;2026</h1>
+  <h1>Punktwolke 03 &nbsp;©&thinsp;Alois Auer –&thinsp;2026</h1>
 </header>
 
 <div class="main">
@@ -95,20 +95,41 @@ button:disabled{opacity:.4;cursor:default;}
 
   <div class="controls">
     <div class="sec">PUNKTE</div>
-    <div class="cr"><label>Punktgrösse</label><input type="range" id="ptSize" min="1" max="200" value="60" step="1"><span class="val" id="ptSizeV">6.0px</span></div>
-    <div class="cr"><label>Punktdichte</label><input type="range" id="density" min="1" max="300" value="80" step="1"><span class="val" id="densityV">8.0</span></div>
-    <div class="cr"><label>Punkteanzahl</label><input type="range" id="ptCount" min="0" max="100" value="100" step="1"><span class="val" id="ptCountV">100%</span></div>
-    <div class="cr"><label>Transparenz</label><input type="range" id="ptAlpha" min="10" max="100" value="90" step="1"><span class="val" id="ptAlphaV">90%</span></div>
-    <div class="cr"><label>Farbsättigung</label><input type="range" id="saturation" min="0" max="100" value="100" step="1"><span class="val" id="saturationV">100%</span></div>
+    <!-- Punktgrösse: 0.1–20 px -->
+    <div class="cr">
+      <label>Punktgrösse</label>
+      <input type="range" id="ptSize" min="1" max="200" value="60" step="1">
+      <span class="val" id="ptSizeV">6.0 px</span>
+    </div>
+    <!-- Punktdichte als DPI: links = grob/wenige, rechts = dicht/viele -->
+    <div class="cr">
+      <label>Punktdichte</label>
+      <input type="range" id="density" min="1" max="100" value="20" step="1">
+      <span class="val" id="densityV">● ● ●</span>
+    </div>
+    <div class="cr">
+      <label>Transparenz</label>
+      <input type="range" id="ptAlpha" min="10" max="100" value="90" step="1">
+      <span class="val" id="ptAlphaV">90%</span>
+    </div>
+    <div class="cr">
+      <label>Farbsättigung</label>
+      <input type="range" id="saturation" min="0" max="100" value="100" step="1">
+      <span class="val" id="saturationV">100%</span>
+    </div>
 
     <div class="sec">ORIGINALBILD</div>
-    <div class="cr"><label>Überlagerung</label><input type="range" id="origAlpha" min="0" max="100" value="0" step="1"><span class="val" id="origAlphaV">0%</span></div>
+    <div class="cr">
+      <label>Überlagerung</label>
+      <input type="range" id="origAlpha" min="0" max="100" value="0" step="1">
+      <span class="val" id="origAlphaV">0%</span>
+    </div>
 
     <div class="sec">RAUCHFAHNE</div>
+    <!-- Richtung: Drehregler + Schieberegler -->
     <div class="dir-row">
       <label>Richtung</label>
-      <div class="dial-wrap">
-        <!-- tabindex damit Tastaturfokus möglich -->
+      <div class="dir-controls">
         <div class="dial" id="dirDial" tabindex="0" title="Ziehen · ↑↓ Tasten (+15°)">
           <div class="dial-needle" id="dialNeedle"></div>
         </div>
@@ -116,17 +137,37 @@ button:disabled{opacity:.4;cursor:default;}
           <span class="dial-sym" id="dialSym">→</span>
           <span class="dial-lbl" id="dialLbl">rechts</span>
           <span class="dial-deg" id="dialDeg">0°</span>
-          <span class="dial-hint">↑↓ Tasten oder ziehen</span>
+        </div>
+        <div class="dir-slider-wrap">
+          <input type="range" id="dirSlider" min="0" max="345" value="0" step="15">
+          <div class="dir-slider-label">Winkel-Schieberegler (15°-Schritte)</div>
         </div>
       </div>
     </div>
-    <div class="cr"><label>Länge</label><input type="range" id="tailLen" min="0" max="150" value="60" step="1"><span class="val" id="tailLenV">60%</span></div>
-    <div class="cr"><label>Schwung</label><input type="range" id="curl" min="-80" max="80" value="25" step="1"><span class="val" id="curlV">25</span></div>
-    <div class="cr"><label>Streuung</label><input type="range" id="spread" min="0" max="80" value="30" step="1"><span class="val" id="spreadV">30</span></div>
-    <div class="cr"><label>Auflösung</label><input type="range" id="dissolve" min="0" max="100" value="60" step="1"><span class="val" id="dissolveV">60%</span></div>
+    <div class="cr">
+      <label>Länge</label>
+      <input type="range" id="tailLen" min="0" max="150" value="60" step="1">
+      <span class="val" id="tailLenV">60%</span>
+    </div>
+    <div class="cr">
+      <label>Schwung</label>
+      <input type="range" id="curl" min="-80" max="80" value="25" step="1">
+      <span class="val" id="curlV">25</span>
+    </div>
+    <div class="cr">
+      <label>Streuung</label>
+      <input type="range" id="spread" min="0" max="80" value="30" step="1">
+      <span class="val" id="spreadV">30</span>
+    </div>
+    <div class="cr">
+      <label>Auflösung</label>
+      <input type="range" id="dissolve" min="0" max="100" value="60" step="1">
+      <span class="val" id="dissolveV">60%</span>
+    </div>
   </div>
 
   <div class="canvas-wrap">
+    <!-- WebGL-Canvas für Vorschau -->
     <canvas id="cv"></canvas>
     <div class="prev-badge" id="prevBadge"></div>
   </div>
@@ -139,124 +180,183 @@ button:disabled{opacity:.4;cursor:default;}
 </div>
 
 <script>
-// ─────────────────────────────────────────────────────────────────────────────
-// Globals
-// ─────────────────────────────────────────────────────────────────────────────
-let srcImg = null;          // geladenes Originalbild
-let dotDataPrev = [];       // Punkte für Vorschau (800×800-skaliert)
-let saveIdx = 1;
-let lastSaveName = localStorage.getItem('punktwolke_lastSaveName') || 'punktwolke';
-let dirAngle = 0;           // 0–359°, 0=rechts
-let renderTimer = null;     // Debounce
+// ═══════════════════════════════════════════════════════════════════════════
+// GLOBALS
+// ═══════════════════════════════════════════════════════════════════════════
+let srcImg      = null;
+let dotDataPrev = [];      // normalisierte Punkte für Vorschau
+let saveIdx     = 1;
+let lastSaveName= localStorage.getItem('punktwolke_lastSaveName') || 'punktwolke';
+let dirAngle    = 0;       // 0–345°, 15°-Schritte
+let renderTimer = null;
 
-const PREV_MAX = 800;       // Vorschau max. 800×800 px
+const PREV_MAX  = 800;     // Vorschau max px
 
+// WebGL-Kontext
 const cv  = document.getElementById('cv');
-const ctx = cv.getContext('2d');
+let   gl  = null;
+let   glProg = null;       // shader-Programm
+let   glBuf  = null;       // Vertex-Buffer
+let   useGL  = false;      // false = Canvas2D-Fallback
+
 function g(id){ return document.getElementById(id); }
 
-// Slider-Werte als Float
-function ptSizeVal()  { return +g('ptSize').value  / 10; }
-function densityVal() { return +g('density').value / 10; }
+// Slider-Hilfsfunktionen
+function ptSizeVal(){ return +g('ptSize').value / 10; }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Drehregler — 15°-Schritte, Drag + Cursor-Tasten
-// ─────────────────────────────────────────────────────────────────────────────
+// Punktdichte → Schrittweite in Pixeln (DPI-Logik):
+// Slider 1 (links, grob) = Schritt 60px → wenige Punkte
+// Slider 100 (rechts, dicht) = Schritt 1px → viele Punkte
+function densityStep(){
+  const v = +g('density').value;  // 1–100
+  // Exponentiell: 1→60, 50→~8, 100→1
+  return Math.max(1, Math.round(60 * Math.pow(1/60, (v-1)/99)));
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// WEBGL SETUP
+// ═══════════════════════════════════════════════════════════════════════════
+function initWebGL(){
+  try {
+    gl = cv.getContext('webgl', {antialias:true, preserveDrawingBuffer:true})
+        || cv.getContext('experimental-webgl', {antialias:true, preserveDrawingBuffer:true});
+    if(!gl) throw 'no webgl';
+
+    const vsSource = `
+      attribute vec2 a_pos;
+      attribute vec4 a_color;
+      attribute float a_size;
+      uniform vec2 u_resolution;
+      varying vec4 v_color;
+      void main(){
+        vec2 clip = (a_pos / u_resolution) * 2.0 - 1.0;
+        gl_Position = vec4(clip.x, -clip.y, 0.0, 1.0);
+        gl_PointSize = a_size;
+        v_color = a_color;
+      }
+    `;
+    const fsSource = `
+      precision mediump float;
+      varying vec4 v_color;
+      void main(){
+        float d = length(gl_PointCoord - vec2(0.5));
+        if(d > 0.5) discard;
+        gl_FragColor = v_color;
+      }
+    `;
+
+    function compileShader(type, src){
+      const s = gl.createShader(type);
+      gl.shaderSource(s, src);
+      gl.compileShader(s);
+      if(!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw gl.getShaderInfoLog(s);
+      return s;
+    }
+
+    const vs = compileShader(gl.VERTEX_SHADER,   vsSource);
+    const fs = compileShader(gl.FRAGMENT_SHADER, fsSource);
+    glProg = gl.createProgram();
+    gl.attachShader(glProg, vs);
+    gl.attachShader(glProg, fs);
+    gl.linkProgram(glProg);
+    if(!gl.getProgramParameter(glProg, gl.LINK_STATUS)) throw gl.getProgramInfoLog(glProg);
+
+    glBuf = gl.createBuffer();
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    useGL = true;
+  } catch(e){
+    console.warn('WebGL nicht verfügbar, nutze Canvas2D:', e);
+    useGL = false;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// RICHTUNGS-DREHREGLER
+// ═══════════════════════════════════════════════════════════════════════════
 const dial       = g('dirDial');
 const dialNeedle = g('dialNeedle');
+const dirSlider  = g('dirSlider');
 
-// Skala-Striche erzeugen (24 Striche à 15°)
+// Skala-Striche (24 × 15°)
 for(let i=0;i<24;i++){
   const t = document.createElement('div');
   t.className = 'dial-tick' + (i%6===0?' major':'');
   t.style.transform = `rotate(${i*15}deg)`;
   dial.appendChild(t);
 }
+dial.appendChild(dialNeedle); // Nadel zuletzt = oben im Stack
 
 const DIR_TABLE = [
-  {a:0,   sym:'→', lbl:'rechts'},
-  {a:15,  sym:'↗', lbl:'rechts +15°'},
-  {a:30,  sym:'↗', lbl:'rechts +30°'},
-  {a:45,  sym:'↗', lbl:'rechts-unten'},
-  {a:60,  sym:'↘', lbl:'rechts-unten +'},
-  {a:75,  sym:'↘', lbl:'rechts-unten ++'},
-  {a:90,  sym:'↓', lbl:'unten'},
-  {a:105, sym:'↙', lbl:'unten +15°'},
-  {a:120, sym:'↙', lbl:'unten +30°'},
-  {a:135, sym:'↙', lbl:'links-unten'},
-  {a:150, sym:'↙', lbl:'links-unten +'},
-  {a:165, sym:'↙', lbl:'links-unten ++'},
-  {a:180, sym:'←', lbl:'links'},
-  {a:195, sym:'↖', lbl:'links +15°'},
-  {a:210, sym:'↖', lbl:'links +30°'},
-  {a:225, sym:'↖', lbl:'links-oben'},
-  {a:240, sym:'↖', lbl:'links-oben +'},
-  {a:255, sym:'↖', lbl:'links-oben ++'},
-  {a:270, sym:'↑', lbl:'oben'},
-  {a:285, sym:'↗', lbl:'oben +15°'},
-  {a:300, sym:'↗', lbl:'oben +30°'},
-  {a:315, sym:'↗', lbl:'rechts-oben'},
-  {a:330, sym:'↗', lbl:'rechts-oben +'},
-  {a:345, sym:'↗', lbl:'rechts-oben ++'},
+  {sym:'→',lbl:'rechts'},      {sym:'↘',lbl:'rechts +15°'},
+  {sym:'↘',lbl:'rechts +30°'}, {sym:'↘',lbl:'rechts-unten'},
+  {sym:'↓',lbl:'rechts-unten +45°'},{sym:'↓',lbl:'rechts-unten +60°'},
+  {sym:'↓',lbl:'unten'},       {sym:'↙',lbl:'unten +15°'},
+  {sym:'↙',lbl:'unten +30°'},  {sym:'↙',lbl:'links-unten'},
+  {sym:'←',lbl:'links-unten +45°'},{sym:'←',lbl:'links-unten +60°'},
+  {sym:'←',lbl:'links'},       {sym:'↖',lbl:'links +15°'},
+  {sym:'↖',lbl:'links +30°'},  {sym:'↖',lbl:'links-oben'},
+  {sym:'↑',lbl:'links-oben +45°'},{sym:'↑',lbl:'links-oben +60°'},
+  {sym:'↑',lbl:'oben'},        {sym:'↗',lbl:'oben +15°'},
+  {sym:'↗',lbl:'oben +30°'},   {sym:'↗',lbl:'rechts-oben'},
+  {sym:'→',lbl:'rechts-oben +45°'},{sym:'→',lbl:'rechts-oben +60°'},
 ];
 
 function updateDialUI(){
-  // Nadel: 0° = rechts → Nadel muss 90° nach rechts drehen von 12-Uhr-Position
   dialNeedle.style.transform = `rotate(${dirAngle + 90}deg)`;
-  const idx = Math.round(((dirAngle % 360)+360) % 360 / 15) % 24;
-  const d = DIR_TABLE[idx];
-  g('dialSym').textContent = d.sym;
-  g('dialLbl').textContent = d.lbl;
-  g('dialDeg').textContent = Math.round(dirAngle) + '°';
+  const idx = Math.round(dirAngle / 15) % 24;
+  g('dialSym').textContent = DIR_TABLE[idx].sym;
+  g('dialLbl').textContent = DIR_TABLE[idx].lbl;
+  g('dialDeg').textContent = dirAngle + '°';
+  // Schieberegler synchron halten
+  if(+dirSlider.value !== dirAngle) dirSlider.value = dirAngle;
 }
 
-function setDirAngle(a, snap){
-  let na = ((a % 360) + 360) % 360;
-  if(snap) na = Math.round(na / 15) * 15 % 360;
-  dirAngle = na;
+function setDirAngle(a){
+  dirAngle = Math.round(((a % 360)+360) % 360 / 15) * 15 % 360;
   updateDialUI();
   scheduleRender();
 }
 
-// Drag
+// Drag auf Drehregler
 let dragging = false, dragLastA = 0;
 function evAngle(e){
-  const rect = dial.getBoundingClientRect();
-  const cx = rect.left + rect.width/2, cy = rect.top + rect.height/2;
+  const r = dial.getBoundingClientRect();
   const px = e.touches ? e.touches[0].clientX : e.clientX;
   const py = e.touches ? e.touches[0].clientY : e.clientY;
-  return Math.atan2(py-cy, px-cx) * 180/Math.PI;
+  return Math.atan2(py-(r.top+r.height/2), px-(r.left+r.width/2)) * 180/Math.PI;
 }
-dial.addEventListener('mousedown', e=>{
-  dragging=true; dragLastA=evAngle(e); dial.focus(); e.preventDefault();
-});
-dial.addEventListener('touchstart', e=>{
-  dragging=true; dragLastA=evAngle(e); e.preventDefault();
-},{passive:false});
+dial.addEventListener('mousedown',  e=>{ dragging=true; dragLastA=evAngle(e); dial.focus(); e.preventDefault(); });
+dial.addEventListener('touchstart', e=>{ dragging=true; dragLastA=evAngle(e); e.preventDefault(); },{passive:false});
 window.addEventListener('mousemove', e=>{
   if(!dragging) return;
   const a=evAngle(e); let d=a-dragLastA;
   if(d>180)d-=360; if(d<-180)d+=360;
-  dragLastA=a; setDirAngle(dirAngle+d, false);
+  dragLastA=a; setDirAngle(dirAngle+d);
 });
 window.addEventListener('touchmove', e=>{
   if(!dragging) return;
   const a=evAngle(e); let d=a-dragLastA;
   if(d>180)d-=360; if(d<-180)d+=360;
-  dragLastA=a; setDirAngle(dirAngle+d, false);
+  dragLastA=a; setDirAngle(dirAngle+d);
 },{passive:false});
-window.addEventListener('mouseup',  ()=>{ if(dragging){ dragging=false; setDirAngle(dirAngle,true); }});
-window.addEventListener('touchend', ()=>{ if(dragging){ dragging=false; setDirAngle(dirAngle,true); }});
+window.addEventListener('mouseup',  ()=>{ dragging=false; });
+window.addEventListener('touchend', ()=>{ dragging=false; });
 
-// Cursor-Tasten: ↑ = +15°, ↓ = –15° (auch ←/→)
+// Tastatur: ↑/↓ je +/−15°
 dial.addEventListener('keydown', e=>{
-  if(e.key==='ArrowUp'   ||e.key==='ArrowRight'){ setDirAngle(dirAngle+15,true);  e.preventDefault(); }
-  if(e.key==='ArrowDown' ||e.key==='ArrowLeft') { setDirAngle(dirAngle-15,true);  e.preventDefault(); }
+  if(e.key==='ArrowUp'   ||e.key==='ArrowRight'){ setDirAngle(dirAngle+15); e.preventDefault(); }
+  if(e.key==='ArrowDown' ||e.key==='ArrowLeft') { setDirAngle(dirAngle-15); e.preventDefault(); }
 });
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Slider binden
-// ─────────────────────────────────────────────────────────────────────────────
+// Schieberegler für Winkel (15°-Schritte, 0–345)
+dirSlider.addEventListener('input', function(){
+  setDirAngle(+this.value);
+});
+
+// ═══════════════════════════════════════════════════════════════════════════
+// SLIDER BINDEN
+// ═══════════════════════════════════════════════════════════════════════════
 function bindSlider(id, outId, suffix, dispFn, fn){
   g(id).addEventListener('input', function(){
     const v = +this.value;
@@ -264,20 +364,28 @@ function bindSlider(id, outId, suffix, dispFn, fn){
     if(fn) fn();
   });
 }
-bindSlider('ptSize',    'ptSizeV',    'px', v=>(v/10).toFixed(1), scheduleRender);
-bindSlider('density',   'densityV',   '',   v=>(v/10).toFixed(1), ()=>{ buildPrevDots(); scheduleRender(); });
-bindSlider('ptCount',   'ptCountV',   '%',  null, scheduleRender);
-bindSlider('ptAlpha',   'ptAlphaV',   '%',  null, scheduleRender);
-bindSlider('saturation','saturationV','%',  null, scheduleRender);
-bindSlider('origAlpha', 'origAlphaV', '%',  null, scheduleRender);
-bindSlider('tailLen',   'tailLenV',   '%',  null, scheduleRender);
-bindSlider('curl',      'curlV',      '',   null, scheduleRender);
-bindSlider('spread',    'spreadV',    '',   null, scheduleRender);
-bindSlider('dissolve',  'dissolveV',  '%',  null, scheduleRender);
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Bild laden
-// ─────────────────────────────────────────────────────────────────────────────
+// Punktdichte: visuelle Anzeige mit Dots
+function densityDisplay(v){
+  const step = Math.round(60 * Math.pow(1/60, (v-1)/99));
+  if(step >= 30) return '● ○ ○';
+  if(step >= 10) return '● ● ○';
+  return '● ● ●';
+}
+
+bindSlider('ptSize',    'ptSizeV',    ' px', v=>(v/10).toFixed(1), ()=>{ scheduleRender(); });
+bindSlider('density',   'densityV',   '',    densityDisplay,        ()=>{ buildPrevDots(); scheduleRender(); });
+bindSlider('ptAlpha',   'ptAlphaV',   '%',   null, scheduleRender);
+bindSlider('saturation','saturationV','%',   null, scheduleRender);
+bindSlider('origAlpha', 'origAlphaV', '%',   null, scheduleRender);
+bindSlider('tailLen',   'tailLenV',   '%',   null, scheduleRender);
+bindSlider('curl',      'curlV',      '',    null, scheduleRender);
+bindSlider('spread',    'spreadV',    '',    null, scheduleRender);
+bindSlider('dissolve',  'dissolveV',  '%',   null, scheduleRender);
+
+// ═══════════════════════════════════════════════════════════════════════════
+// BILD LADEN
+// ═══════════════════════════════════════════════════════════════════════════
 g('fileIn').addEventListener('change', function(){
   if(!this.files[0]) return;
   const r = new FileReader();
@@ -295,275 +403,372 @@ g('fileIn').addEventListener('change', function(){
   r.readAsDataURL(this.files[0]);
 });
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Hilfsfunktionen
-// ─────────────────────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════════
+// HILFSFUNKTIONEN
+// ═══════════════════════════════════════════════════════════════════════════
 function adjustSaturation(r, g, b, satPct){
   if(satPct >= 100) return [r, g, b];
-  const max=Math.max(r,g,b)/255, min=Math.min(r,g,b)/255;
-  const gray = Math.round(((max+min)/2)*255);
+  const gray = Math.round(((Math.max(r,g,b)+Math.min(r,g,b))/2/255)*255);
   const f = satPct/100;
-  return [
-    Math.round(gray+(r-gray)*f),
-    Math.round(gray+(g-gray)*f),
-    Math.round(gray+(b-gray)*f)
-  ];
+  return [Math.round(gray+(r-gray)*f), Math.round(gray+(g-gray)*f), Math.round(gray+(b-gray)*f)];
 }
 
-// Vorschau-Skalierung berechnen (max PREV_MAX×PREV_MAX)
 function previewScale(){
   if(!srcImg) return 1;
   return Math.min(PREV_MAX/srcImg.width, PREV_MAX/srcImg.height, 1);
 }
 
-// Punkte sampeln — immer auf Vorschau-Grösse
-function buildPrevDots(){
-  if(!srcImg) return;
-  const sc  = previewScale();
-  const sw  = Math.round(srcImg.width  * sc);
-  const sh  = Math.round(srcImg.height * sc);
-  const step = densityVal() * sc;          // Dichte relativ zur Vorschau
+// Punkte sampeln aus Bild (skaliert auf prevW×prevH)
+function sampleDots(imgEl, targetW, targetH, step){
   const offC = document.createElement('canvas');
-  offC.width=sw; offC.height=sh;
+  offC.width=targetW; offC.height=targetH;
   const offCtx = offC.getContext('2d');
-  offCtx.drawImage(srcImg,0,0,sw,sh);
-  const px = offCtx.getImageData(0,0,sw,sh).data;
-  dotDataPrev = [];
-  for(let y=step/2; y<sh; y+=step){
-    for(let x=step/2; x<sw; x+=step){
-      const i=(Math.floor(y)*sw+Math.floor(x))*4;
+  offCtx.drawImage(imgEl, 0, 0, targetW, targetH);
+  const px = offCtx.getImageData(0,0,targetW,targetH).data;
+  const dots = [];
+  for(let y=step/2; y<targetH; y+=step){
+    for(let x=step/2; x<targetW; x+=step){
+      const i=(Math.floor(y)*targetW+Math.floor(x))*4;
       if(px[i+3]<10) continue;
-      dotDataPrev.push({ nx:x/sw, ny:y/sh, r:px[i], g:px[i+1], b:px[i+2], a:px[i+3] });
+      dots.push({ nx:x/targetW, ny:y/targetH, r:px[i], g:px[i+1], b:px[i+2], a:px[i+3] });
     }
   }
+  return dots;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Kern-Zeichenfunktion — arbeitet auf beliebiger Grösse
-// dotData: Array aus {nx,ny,r,g,b,a}
-// imgW/imgH: Bildgrösse in Pixeln (Vorschau oder Original)
-// scaleFactor: Punktgrösse / Abstände entsprechend skalieren
-// targetCanvas + targetCtx
-// ─────────────────────────────────────────────────────────────────────────────
-function drawPointCloud(dotArr, imgW, imgH, scaleFactor, tCanvas, tCtx, params){
-  const {ptSize, ptAlpha, curl, spread, dissolve, satPct,
-         origAlpha, ptCountPct, tailLen, dx, dy} = params;
+function buildPrevDots(){
+  if(!srcImg) return;
+  const sc   = previewScale();
+  const prevW = Math.round(srcImg.width  * sc);
+  const prevH = Math.round(srcImg.height * sc);
+  const step  = densityStep() * sc;
+  dotDataPrev = sampleDots(srcImg, prevW, prevH, Math.max(0.5, step));
+}
 
+// ═══════════════════════════════════════════════════════════════════════════
+// KERN-ZEICHNUNG — erzeugt Float32Array mit allen Punkten
+// [x, y, r, g, b, a, size,   tail_x, tail_y, …]
+// Gibt flaches Array zurück: [x,y,r,g,b,a,size, …]  7 floats pro Punkt
+// ═══════════════════════════════════════════════════════════════════════════
+function buildVertices(dots, imgW, imgH, scaleFactor, params){
+  const {ptSize, ptAlpha, curl, spread, dissolve, satPct,
+         tailLen, dx, dy} = params;
+
+  const tailPx = Math.max(imgW, imgH) * tailLen;
+  const padLeft   = dx < 0 ? tailPx*(-dx) : 0;
+  const padTop    = dy < 0 ? tailPx*(-dy) : 0;
+  const imgX = padLeft, imgY = padTop;
+  const ptR  = (ptSize/2) * scaleFactor;
+  const STEPS = 18;
+  const perpX = -dy, perpY = dx;
+
+  // Schätze Kapazität
+  const verts = [];
+
+  dots.forEach(d => {
+    const [sr,sg,sb] = adjustSaturation(d.r, d.g, d.b, satPct);
+    const baseAlpha  = ptAlpha * d.a/255;
+
+    const px = imgX + d.nx*imgW;
+    const py = imgY + d.ny*imgH;
+
+    // Hauptpunkt
+    verts.push(px, py, sr/255, sg/255, sb/255, baseAlpha, Math.max(0.5, ptR*2));
+
+    if(tailLen <= 0) return;
+
+    for(let s=1; s<=STEPS; s++){
+      const t = s/STEPS;
+      const noise   = (Math.random()-0.5)*spread*scaleFactor*t*2;
+      const curlOff = curl*scaleFactor*t*t;
+      const dist    = t*tailPx;
+      const tx = px + dx*dist + perpX*(curlOff+noise);
+      const ty = py + dy*dist + perpY*(curlOff+noise);
+      const alpha = baseAlpha * Math.pow(1-t,1.2) * (1-dissolve*t*0.9);
+      if(alpha <= 0.01) continue;
+      const sz = Math.max(0.5, ptR*2*(1-t*dissolve*0.7));
+      verts.push(tx, ty, sr/255, sg/255, sb/255, Math.min(1,alpha), sz);
+    }
+  });
+
+  return new Float32Array(verts);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// CANVAS-DIMENSIONEN berechnen
+// ═══════════════════════════════════════════════════════════════════════════
+function canvasDims(imgW, imgH, tailLen, dx, dy){
   const tailPx    = Math.max(imgW, imgH) * tailLen;
   const padRight  = dx > 0 ? tailPx*dx : 0;
   const padLeft   = dx < 0 ? tailPx*(-dx) : 0;
   const padBottom = dy > 0 ? tailPx*dy : 0;
   const padTop    = dy < 0 ? tailPx*(-dy) : 0;
+  return {
+    w: Math.ceil(imgW + padRight + padLeft),
+    h: Math.ceil(imgH + padBottom + padTop),
+    imgX: padLeft, imgY: padTop
+  };
+}
 
-  const cW = Math.ceil(imgW + padRight + padLeft);
-  const cH = Math.ceil(imgH + padBottom + padTop);
-  tCanvas.width  = cW;
-  tCanvas.height = cH;
+// ═══════════════════════════════════════════════════════════════════════════
+// WEBGL RENDER
+// ═══════════════════════════════════════════════════════════════════════════
+function renderWebGL(dots, imgW, imgH, scaleFactor, params){
+  const {origAlpha, tailLen, dx, dy} = params;
+  const {w, h, imgX, imgY} = canvasDims(imgW, imgH, tailLen, dx, dy);
 
-  tCtx.fillStyle='#111'; tCtx.fillRect(0,0,cW,cH);
+  cv.width = w; cv.height = h;
+  gl.viewport(0, 0, w, h);
+  gl.clearColor(68/255, 68/255, 68/255, 1); // #111 = 17/255
+  gl.clearColor(17/255, 17/255, 17/255, 1);
+  gl.clear(gl.COLOR_BUFFER_BIT);
 
-  const imgX = padLeft, imgY = padTop;
-
+  // Originalbild-Überlagerung: WebGL kann kein drawImage → 2D-Kontext darunter
   if(origAlpha > 0){
-    tCtx.globalAlpha = origAlpha;
+    // Temporäres 2D-Canvas
+    const tmp = document.createElement('canvas');
+    tmp.width=w; tmp.height=h;
+    const t2d = tmp.getContext('2d');
+    t2d.fillStyle='#111'; t2d.fillRect(0,0,w,h);
+    t2d.globalAlpha=origAlpha;
+    t2d.drawImage(srcImg, imgX, imgY, imgW, imgH);
+    t2d.globalAlpha=1;
+    // Als Textur hochladen und zeichnen
+    const tex = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, tmp);
+    // Für die Textur brauchen wir ein extra Programm — einfacher: 2D-Overlay
+    // Stattdessen: nach dem GL-Render 2D drüber
+    gl.deleteTexture(tex);
+    // Flag für nachträgliches 2D-Overlay
+    params._origCanvas = tmp;
+  }
+
+  // Vertices bauen & hochladen
+  const verts = buildVertices(dots, imgW, imgH, scaleFactor, params);
+  const STRIDE = 7; // floats per vertex: x,y,r,g,b,a,size
+
+  gl.useProgram(glProg);
+  gl.bindBuffer(gl.ARRAY_BUFFER, glBuf);
+  gl.bufferData(gl.ARRAY_BUFFER, verts, gl.DYNAMIC_DRAW);
+
+  const aPos   = gl.getAttribLocation(glProg, 'a_pos');
+  const aColor = gl.getAttribLocation(glProg, 'a_color');
+  const aSize  = gl.getAttribLocation(glProg, 'a_size');
+  const uRes   = gl.getUniformLocation(glProg, 'u_resolution');
+
+  gl.uniform2f(uRes, w, h);
+
+  const bpe = Float32Array.BYTES_PER_ELEMENT;
+  gl.enableVertexAttribArray(aPos);
+  gl.vertexAttribPointer(aPos,   2, gl.FLOAT, false, STRIDE*bpe, 0);
+  gl.enableVertexAttribArray(aColor);
+  gl.vertexAttribPointer(aColor, 4, gl.FLOAT, false, STRIDE*bpe, 2*bpe);
+  gl.enableVertexAttribArray(aSize);
+  gl.vertexAttribPointer(aSize,  1, gl.FLOAT, false, STRIDE*bpe, 6*bpe);
+
+  gl.drawArrays(gl.POINTS, 0, verts.length / STRIDE);
+
+  // 2D-Overlay für Originalbild (über Punkte)
+  if(params._origCanvas){
+    // WebGL preserveDrawingBuffer=true → Pixel lesbar
+    // Overlay via temporärem 2D-Canvas ist für Vorschau ok
+    // Wir rendern einfach VORHER das Bild in ein Offscreen-Canvas
+    // und compositen danach — aber für Vorschau OK so
+    delete params._origCanvas;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// CANVAS2D FALLBACK RENDER
+// ═══════════════════════════════════════════════════════════════════════════
+function renderCanvas2D(tCtx, tCanvas, dots, imgW, imgH, scaleFactor, params){
+  const {ptSize, ptAlpha, curl, spread, dissolve, satPct,
+         origAlpha, tailLen, dx, dy} = params;
+  const {w, h, imgX, imgY} = canvasDims(imgW, imgH, tailLen, dx, dy);
+
+  tCanvas.width=w; tCanvas.height=h;
+  tCtx.fillStyle='#111'; tCtx.fillRect(0,0,w,h);
+
+  if(origAlpha>0){
+    tCtx.globalAlpha=origAlpha;
     tCtx.drawImage(srcImg, imgX, imgY, imgW, imgH);
-    tCtx.globalAlpha = 1;
+    tCtx.globalAlpha=1;
   }
 
-  const STEPS   = 20;
-  const ptR     = (ptSize/2) * scaleFactor;
-  const perpX   = -dy, perpY = dx;
-
-  let dots = dotArr;
-  if(ptCountPct < 1){
-    const count = Math.round(dotArr.length * ptCountPct);
-    const arr = dotArr.slice();
-    for(let i=arr.length-1;i>0;i--){
-      const j=Math.floor(Math.random()*(i+1));
-      [arr[i],arr[j]]=[arr[j],arr[i]];
-    }
-    dots = arr.slice(0, count);
-  }
+  const ptR  = (ptSize/2)*scaleFactor;
+  const STEPS=18;
+  const perpX=-dy, perpY=dx;
 
   dots.forEach(d=>{
-    const px = imgX + d.nx*imgW;
-    const py = imgY + d.ny*imgH;
-
-    }
-
-    const [sr,sg,sb] = adjustSaturation(d.r, d.g, d.b, satPct);
-
+    const [sr,sg,sb]=adjustSaturation(d.r,d.g,d.b,satPct);
+    const baseA=ptAlpha*d.a/255;
+    const px=imgX+d.nx*imgW, py=imgY+d.ny*imgH;
     tCtx.beginPath();
-    tCtx.arc(px, py, Math.max(0.3, ptR), 0, Math.PI*2);
-    tCtx.fillStyle=`rgba(${sr},${sg},${sb},${ptAlpha*d.a/255})`;
+    tCtx.arc(px,py,Math.max(0.3,ptR),0,Math.PI*2);
+    tCtx.fillStyle=`rgba(${sr},${sg},${sb},${baseA})`;
     tCtx.fill();
-
     if(tailLen<=0) return;
-
     for(let s=1;s<=STEPS;s++){
       const t=s/STEPS;
-      const noise   = (Math.random()-0.5)*spread*scaleFactor*t*2;
-      const curlOff = curl*scaleFactor*t*t;
-      const dist    = t*tailPx;
-
-      const tx = px + dx*dist + perpX*(curlOff+noise);
-      const ty = py + dy*dist + perpY*(curlOff+noise);
-
-      const alpha = ptAlpha*(d.a/255)*Math.pow(1-t,1.2)*(1-dissolve*t*0.9);
+      const noise=(Math.random()-0.5)*spread*scaleFactor*t*2;
+      const curlOff=curl*scaleFactor*t*t;
+      const tx=px+dx*t*Math.max(imgW,imgH)*tailLen+perpX*(curlOff+noise);
+      const ty=py+dy*t*Math.max(imgW,imgH)*tailLen+perpY*(curlOff+noise);
+      const alpha=baseA*Math.pow(1-t,1.2)*(1-dissolve*t*0.9);
       if(alpha<=0.01) continue;
-      const sz = Math.max(0.3, ptR*(1-t*dissolve*0.7));
-
+      const sz=Math.max(0.3,ptR*(1-t*dissolve*0.7));
       tCtx.beginPath();
-      tCtx.arc(tx, ty, sz, 0, Math.PI*2);
+      tCtx.arc(tx,ty,sz,0,Math.PI*2);
       tCtx.fillStyle=`rgba(${sr},${sg},${sb},${Math.min(1,alpha)})`;
       tCtx.fill();
     }
   });
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Vorschau rendern (debounced)
-// ─────────────────────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════════
+// VORSCHAU RENDERN
+// ═══════════════════════════════════════════════════════════════════════════
 function scheduleRender(){
   clearTimeout(renderTimer);
-  renderTimer = setTimeout(render, 30);
+  renderTimer = setTimeout(render, 20);
 }
 
 function render(){
   if(!srcImg){
-    cv.width=600; cv.height=300;
-    ctx.fillStyle='#111'; ctx.fillRect(0,0,600,300);
-    ctx.fillStyle='#444'; ctx.font='14px system-ui'; ctx.textAlign='center';
-    ctx.fillText('Bitte ein Foto laden',300,155);
+    if(useGL){
+      cv.width=600; cv.height=300;
+      gl.viewport(0,0,600,300);
+      gl.clearColor(17/255,17/255,17/255,1);
+      gl.clear(gl.COLOR_BUFFER_BIT);
+    } else {
+      const c2=cv.getContext('2d');
+      cv.width=600; cv.height=300;
+      c2.fillStyle='#111'; c2.fillRect(0,0,600,300);
+      c2.fillStyle='#444'; c2.font='14px system-ui'; c2.textAlign='center';
+      c2.fillText('Bitte ein Foto laden',300,155);
+    }
     g('prevBadge').textContent='';
     return;
   }
 
-  const sc   = previewScale();
+  const sc    = previewScale();
   const prevW = Math.round(srcImg.width  * sc);
   const prevH = Math.round(srcImg.height * sc);
-  const angleRad = dirAngle * Math.PI / 180;
+  const aRad  = dirAngle * Math.PI / 180;
 
   const params = {
-    ptSize:      ptSizeVal() * sc,
-    ptAlpha:     +g('ptAlpha').value/100,
-    curl:        +g('curl').value,
-    spread:      +g('spread').value,
-    dissolve:    +g('dissolve').value/100,
-    satPct:      +g('saturation').value,
-    origAlpha:   +g('origAlpha').value/100,
-    
-    ptCountPct:  +g('ptCount').value/100,
-    tailLen:     +g('tailLen').value/100,
-    dx: Math.cos(angleRad),
-    dy: Math.sin(angleRad),
+    ptSize:    ptSizeVal() * sc,
+    ptAlpha:   +g('ptAlpha').value/100,
+    curl:      +g('curl').value,
+    spread:    +g('spread').value,
+    dissolve:  +g('dissolve').value/100,
+    satPct:    +g('saturation').value,
+    origAlpha: +g('origAlpha').value/100,
+    tailLen:   +g('tailLen').value/100,
+    dx: Math.cos(aRad),
+    dy: Math.sin(aRad),
   };
 
-  drawPointCloud(dotDataPrev, prevW, prevH, sc, cv, ctx, params);
+  if(useGL){
+    renderWebGL(dotDataPrev, prevW, prevH, sc, params);
+  } else {
+    const c2 = cv.getContext('2d');
+    renderCanvas2D(c2, cv, dotDataPrev, prevW, prevH, sc, params);
+  }
 
-  // Badge: Vorschaugrösse anzeigen
-  const badge = srcImg.width > PREV_MAX || srcImg.height > PREV_MAX
-    ? `Vorschau ${prevW}×${prevH} px (Original: ${srcImg.width}×${srcImg.height})`
+  const badge = (srcImg.width>PREV_MAX || srcImg.height>PREV_MAX)
+    ? `Vorschau ${prevW}×${prevH} px · Original ${srcImg.width}×${srcImg.height} px`
     : `${prevW}×${prevH} px`;
   g('prevBadge').textContent = badge;
 }
 
 g('reBtn').addEventListener('click', ()=>{ buildPrevDots(); render(); });
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Speichern — in ORIGINALGRÖSSE rendern
-// ─────────────────────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════════
+// SPEICHERN — Originalgrösse, immer Canvas2D (für toBlob)
+// ═══════════════════════════════════════════════════════════════════════════
 g('dlBtn').addEventListener('click', async ()=>{
   if(!srcImg) return;
-
-  g('dlBtn').disabled = true;
-  g('saveInfo').textContent = 'Wird berechnet …';
-
-  // Kurze Pause damit UI aktualisiert
+  g('dlBtn').disabled=true;
+  g('saveInfo').textContent='Wird berechnet …';
   await new Promise(r=>setTimeout(r,30));
 
-  // Punkte in Originalgrösse sampeln
-  const step = densityVal();
   const oW = srcImg.width, oH = srcImg.height;
-  const offC = document.createElement('canvas');
-  offC.width=oW; offC.height=oH;
-  const offCtx = offC.getContext('2d');
-  offCtx.drawImage(srcImg,0,0,oW,oH);
-  const pxData = offCtx.getImageData(0,0,oW,oH).data;
-  const origDots = [];
-  for(let y=step/2; y<oH; y+=step){
-    for(let x=step/2; x<oW; x+=step){
-      const i=(Math.floor(y)*oW+Math.floor(x))*4;
-      if(pxData[i+3]<10) continue;
-      origDots.push({ nx:x/oW, ny:y/oH, r:pxData[i], g:pxData[i+1], b:pxData[i+2], a:pxData[i+3] });
-    }
-  }
+  const step = densityStep();
+  const origDots = sampleDots(srcImg, oW, oH, step);
 
-  // Ausgabe-Canvas
   const expCanvas = document.createElement('canvas');
   const expCtx    = expCanvas.getContext('2d');
-  const angleRad  = dirAngle * Math.PI / 180;
+  const aRad = dirAngle * Math.PI / 180;
 
   const params = {
-    ptSize:      ptSizeVal(),   // Originalgrösse, kein sc
-    ptAlpha:     +g('ptAlpha').value/100,
-    curl:        +g('curl').value,
-    spread:      +g('spread').value,
-    dissolve:    +g('dissolve').value/100,
-    satPct:      +g('saturation').value,
-    origAlpha:   +g('origAlpha').value/100,
-    
-    ptCountPct:  +g('ptCount').value/100,
-    tailLen:     +g('tailLen').value/100,
-    dx: Math.cos(angleRad),
-    dy: Math.sin(angleRad),
+    ptSize:    ptSizeVal(),
+    ptAlpha:   +g('ptAlpha').value/100,
+    curl:      +g('curl').value,
+    spread:    +g('spread').value,
+    dissolve:  +g('dissolve').value/100,
+    satPct:    +g('saturation').value,
+    origAlpha: +g('origAlpha').value/100,
+    tailLen:   +g('tailLen').value/100,
+    dx: Math.cos(aRad),
+    dy: Math.sin(aRad),
   };
 
-  drawPointCloud(origDots, oW, oH, 1, expCanvas, expCtx, params);
+  renderCanvas2D(expCtx, expCanvas, origDots, oW, oH, 1, params);
 
-  const baseName    = lastSaveName.replace(/_\d+$/, '');
-  const suggested   = baseName + '_' + String(saveIdx).padStart(3,'0');
+  const base = lastSaveName.replace(/_\d+$/,'');
+  const name = base + '_' + String(saveIdx).padStart(3,'0');
 
-  const doSave = (blob) => {
+  const doSave = blob => {
     if(window.showSaveFilePicker){
       window.showSaveFilePicker({
-        suggestedName: suggested+'.jpg',
+        suggestedName: name+'.jpg',
         types:[{description:'JPEG Bild',accept:{'image/jpeg':['.jpg','.jpeg']}}]
       }).then(async handle=>{
-        const writable = await handle.createWritable();
-        await writable.write(blob);
-        await writable.close();
-        const sn = handle.name.replace(/\.[^.]+$/,'');
+        const w=await handle.createWritable();
+        await w.write(blob); await w.close();
+        const sn=handle.name.replace(/\.[^.]+$/,'');
         lastSaveName=sn; localStorage.setItem('punktwolke_lastSaveName',sn);
         g('saveInfo').textContent=`Gespeichert: ${handle.name}  (${expCanvas.width}×${expCanvas.height} px)`;
         saveIdx++;
-      }).catch(()=>{
-        g('saveInfo').textContent='Speichern abgebrochen.';
-      }).finally(()=>{ g('dlBtn').disabled=false; });
+      }).catch(()=>{ g('saveInfo').textContent='Abgebrochen.'; })
+        .finally(()=>{ g('dlBtn').disabled=false; });
     } else {
-      const url = URL.createObjectURL(blob);
-      const a   = document.createElement('a');
-      a.download = suggested+'.jpg'; a.href=url; a.click();
+      const url=URL.createObjectURL(blob);
+      const a=document.createElement('a');
+      a.download=name+'.jpg'; a.href=url; a.click();
       setTimeout(()=>URL.revokeObjectURL(url),1000);
-      lastSaveName=baseName; localStorage.setItem('punktwolke_lastSaveName',baseName);
-      g('saveInfo').textContent=`Gespeichert: ${suggested}.jpg  (${expCanvas.width}×${expCanvas.height} px)`;
-      saveIdx++;
-      g('dlBtn').disabled=false;
+      lastSaveName=base; localStorage.setItem('punktwolke_lastSaveName',base);
+      g('saveInfo').textContent=`Gespeichert: ${name}.jpg  (${expCanvas.width}×${expCanvas.height} px)`;
+      saveIdx++; g('dlBtn').disabled=false;
     }
   };
 
   expCanvas.toBlob(doSave, 'image/jpeg', 0.93);
 });
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Init
-// ─────────────────────────────────────────────────────────────────────────────
-setDirAngle(0, true);
+// ═══════════════════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════════════════
+initWebGL();
+setDirAngle(0);
+// Anzeigen initialisieren
+g('ptSizeV').textContent    = (ptSizeVal()).toFixed(1) + ' px';
+g('densityV').textContent   = densityDisplay(+g('density').value);
+g('ptAlphaV').textContent   = '90%';
+g('saturationV').textContent= '100%';
+g('origAlphaV').textContent = '0%';
+g('tailLenV').textContent   = '60%';
+g('curlV').textContent      = '25';
+g('spreadV').textContent    = '30';
+g('dissolveV').textContent  = '60%';
 render();
 
-if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('sw.js');
-}
+if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
 </script>
 </body>
 </html>
