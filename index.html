@@ -6,53 +6,77 @@
 <meta name="theme-color" content="#111111">
 <meta name="description" content="Foto in Punktwolke mit Rauchfahne verwandeln">
 <link rel="manifest" href="manifest.json">
-<title>Punktwolke 03E</title>
+<title>Punktwolke 03F</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:system-ui,sans-serif;background:#1a1a1a;color:#eee;min-height:100vh;}
 header{background:#111;padding:10px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #333;}
 header svg{flex-shrink:0;}
 header h1{font-size:12px;font-weight:500;color:#fff;letter-spacing:.01em;white-space:nowrap;}
-.main{padding:12px;max-width:800px;margin:0 auto;}
-.dz{border:2px dashed #444;border-radius:12px;padding:20px;text-align:center;cursor:pointer;background:#222;position:relative;margin-bottom:12px;transition:border-color .2s;}
+
+/* ── Zweispalten-Layout ── */
+.workspace{display:flex;gap:10px;padding:10px;max-width:1400px;margin:0 auto;min-height:calc(100vh - 41px);}
+.left-col{flex:3;min-width:0;display:flex;flex-direction:column;gap:10px;}
+.right-col{flex:1;min-width:200px;max-width:280px;display:flex;flex-direction:column;gap:8px;overflow-y:auto;max-height:calc(100vh - 61px);padding-right:2px;}
+
+/* Dropzone */
+.dz{border:2px dashed #444;border-radius:10px;padding:14px;text-align:center;cursor:pointer;background:#222;position:relative;transition:border-color .2s;flex-shrink:0;}
 .dz:hover{border-color:#888;}
 .dz.loaded{border-color:#4caf50;border-style:solid;}
 .dz input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
-.dz .lbl{font-size:13px;color:#888;}
-.controls{background:#222;border-radius:12px;border:1px solid #333;padding:12px 14px;margin-bottom:12px;display:grid;gap:8px;}
-.sec{font-size:10px;font-weight:600;color:#666;letter-spacing:.08em;margin-top:6px;}
-.cr{display:flex;align-items:center;gap:8px;}
-.cr label{font-size:12px;color:#aaa;min-width:130px;}
-.cr input[type=range]{flex:1;accent-color:#fff;}
-.cr .val{font-size:12px;font-weight:600;min-width:52px;text-align:right;color:#fff;}
-.cr select{flex:1;font-size:12px;padding:4px 8px;border-radius:6px;border:1px solid #444;background:#333;color:#eee;}
-/* Richtungsregler */
-.dir-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
-.dir-row>label{font-size:12px;color:#aaa;min-width:130px;flex-shrink:0;}
-.dir-controls{display:flex;align-items:center;gap:10px;flex:1;flex-wrap:wrap;}
-.dial{width:54px;height:54px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#3a3a3a,#1e1e1e);border:2px solid #555;position:relative;cursor:grab;touch-action:none;user-select:none;flex-shrink:0;outline:none;}
-.dial:focus{border-color:#aaa;}
-.dial:active{cursor:grabbing;}
-.dial-tick{position:absolute;width:2px;height:5px;background:#3a3a3a;border-radius:1px;top:4px;left:50%;margin-left:-1px;transform-origin:1px 23px;}
-.dial-tick.major{background:#555;height:7px;}
-.dial-needle{position:absolute;top:50%;left:50%;width:2px;height:19px;background:linear-gradient(to top,#fff,rgba(255,255,255,0.3));border-radius:1px;transform-origin:50% 100%;margin-left:-1px;margin-top:-19px;}
-.dial-info{display:flex;flex-direction:column;gap:1px;min-width:60px;}
-.dial-sym{font-size:17px;line-height:1.2;}
-.dial-lbl{font-size:10px;color:#888;}
-.dial-deg{font-size:10px;color:#555;}
-.dir-slider-wrap{display:flex;flex-direction:column;gap:3px;flex:1;min-width:100px;}
-.dir-slider-wrap input[type=range]{width:100%;accent-color:#fff;}
-.dir-slider-label{font-size:10px;color:#555;text-align:center;}
-.canvas-wrap{border-radius:12px;overflow:hidden;background:#111;margin-bottom:10px;position:relative;}
-canvas{display:block;width:100%;height:auto;background:#111;}
-.prev-badge{position:absolute;bottom:8px;right:10px;font-size:10px;color:#555;background:rgba(0,0,0,.5);padding:2px 6px;border-radius:4px;pointer-events:none;}
-.btn-row{display:flex;gap:8px;flex-wrap:wrap;}
-button{font-size:13px;padding:10px 18px;border-radius:8px;border:1px solid #444;background:#333;color:#eee;cursor:pointer;font-weight:500;}
+.dz .lbl{font-size:12px;color:#888;}
+
+/* Canvas */
+.canvas-wrap{border-radius:10px;overflow:hidden;background:#111;position:relative;flex:1;}
+canvas{display:block;width:100%;height:100%;object-fit:contain;background:#111;}
+.prev-badge{position:absolute;bottom:6px;right:8px;font-size:10px;color:#555;background:rgba(0,0,0,.5);padding:2px 6px;border-radius:4px;pointer-events:none;}
+
+/* Buttons */
+.btn-row{display:flex;gap:6px;flex-wrap:wrap;flex-shrink:0;}
+button{font-size:12px;padding:8px 14px;border-radius:7px;border:1px solid #444;background:#333;color:#eee;cursor:pointer;font-weight:500;}
 button:hover{background:#444;}
 button.primary{background:#fff;color:#111;border-color:#fff;}
 button.primary:hover{background:#ddd;}
 button:disabled{opacity:.4;cursor:default;}
-.save-info{font-size:11px;color:#666;margin-top:6px;}
+button.small{font-size:11px;padding:5px 10px;}
+.save-info{font-size:10px;color:#666;}
+
+/* Controls (rechte Spalte) */
+.controls{background:#222;border-radius:10px;border:1px solid #333;padding:8px 10px;display:grid;gap:5px;}
+.sec{font-size:9px;font-weight:700;color:#555;letter-spacing:.1em;margin-top:4px;text-transform:uppercase;}
+.cr{display:flex;align-items:center;gap:5px;}
+.cr label{font-size:10px;color:#999;min-width:0;flex:1.2;}
+.cr input[type=range]{flex:2;accent-color:#fff;height:14px;}
+.cr .val{font-size:10px;font-weight:600;min-width:36px;text-align:right;color:#ddd;}
+.cr select{flex:2;font-size:10px;padding:2px 5px;border-radius:5px;border:1px solid #444;background:#333;color:#eee;}
+
+/* Preset-Buttons */
+.preset-row{display:flex;gap:4px;margin-bottom:2px;}
+.preset-row button{flex:1;font-size:10px;padding:5px 4px;}
+
+/* Richtungsregler — kompakt */
+.dir-row{display:flex;flex-direction:column;gap:4px;}
+.dir-row>label{font-size:10px;color:#999;}
+.dir-controls{display:flex;align-items:center;gap:6px;}
+.dial{width:44px;height:44px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#3a3a3a,#1e1e1e);border:2px solid #555;position:relative;cursor:grab;touch-action:none;user-select:none;flex-shrink:0;outline:none;}
+.dial:focus{border-color:#aaa;}
+.dial:active{cursor:grabbing;}
+.dial-tick{position:absolute;width:2px;height:4px;background:#3a3a3a;border-radius:1px;top:3px;left:50%;margin-left:-1px;transform-origin:1px 19px;}
+.dial-tick.major{background:#555;height:6px;}
+.dial-needle{position:absolute;top:50%;left:50%;width:2px;height:15px;background:linear-gradient(to top,#fff,rgba(255,255,255,0.3));border-radius:1px;transform-origin:50% 100%;margin-left:-1px;margin-top:-15px;}
+.dial-info{display:flex;flex-direction:column;gap:1px;min-width:50px;}
+.dial-sym{font-size:14px;line-height:1.2;}
+.dial-lbl{font-size:9px;color:#888;}
+.dial-deg{font-size:9px;color:#555;}
+.dir-slider-wrap{flex:1;display:flex;flex-direction:column;gap:2px;}
+.dir-slider-wrap input[type=range]{width:100%;accent-color:#fff;}
+.dir-slider-label{font-size:9px;color:#444;text-align:center;}
+
+/* Mobile: untereinander */
+@media(max-width:600px){
+  .workspace{flex-direction:column;}
+  .right-col{max-width:100%;max-height:none;}
+}
 </style>
 </head>
 <body>
@@ -65,14 +89,39 @@ button:disabled{opacity:.4;cursor:default;}
     <circle cx="4" cy="17" r="2" fill="#fff" opacity=".4"/>
     <circle cx="20" cy="18" r="1" fill="#fff" opacity=".3"/>
   </svg>
-  <h1>Punktwolke 03E &nbsp;©&thinsp;Alois Auer –&thinsp;2026</h1>
+  <h1>Punktwolke 03F &nbsp;©&thinsp;Alois Auer –&thinsp;2026</h1>
 </header>
 
-<div class="main">
-  <div class="dz" id="dz">
-    <input type="file" accept="image/*" id="fileIn">
-    <div class="lbl" id="dzLbl">Foto laden — tippen oder hineinziehen</div>
+<div class="workspace">
+  <!-- Linke Spalte: Dropzone + Canvas + Buttons -->
+  <div class="left-col">
+    <div class="dz" id="dz">
+      <input type="file" accept="image/*" id="fileIn">
+      <div class="lbl" id="dzLbl">Foto laden — tippen oder hineinziehen</div>
+    </div>
+    <div class="canvas-wrap">
+      <canvas id="cv"></canvas>
+      <div class="prev-badge" id="prevBadge"></div>
+    </div>
+    <div class="btn-row">
+      <button class="primary" id="dlBtn">💾 Speichern als JPG</button>
+      <button id="reBtn">Neu zeichnen</button>
+    </div>
+    <div class="save-info" id="saveInfo"></div>
   </div>
+
+  <!-- Rechte Spalte: Regler -->
+  <div class="right-col">
+    <!-- Preset-Buttons -->
+    <div class="controls" style="padding:8px 10px;">
+      <div class="sec">EINSTELLUNGEN</div>
+      <div class="preset-row">
+        <button class="small" id="btnSavePreset" title="Aktuelle Einstellungen speichern">💾 Merken</button>
+        <button class="small" id="btnLoadPreset" title="Gespeicherte Einstellungen laden">↩ Laden</button>
+        <button class="small" id="btnDefaults"   title="Standardwerte">⟳ Standard</button>
+      </div>
+      <div id="presetInfo" style="font-size:9px;color:#555;margin-top:2px;"></div>
+    </div>
 
   <div class="controls">
     <div class="sec">PUNKTE</div>
@@ -166,19 +215,9 @@ button:disabled{opacity:.4;cursor:default;}
       <input type="range" id="origAlpha" min="0" max="100" value="0" step="1">
       <span class="val" id="origAlphaV">0%</span>
     </div>
-  </div>
-
-  <div class="canvas-wrap">
-    <canvas id="cv"></canvas>
-    <div class="prev-badge" id="prevBadge"></div>
-  </div>
-
-  <div class="btn-row">
-    <button class="primary" id="dlBtn">💾 Speichern als JPG</button>
-    <button id="reBtn">Neu zeichnen</button>
-  </div>
-  <div class="save-info" id="saveInfo"></div>
-</div>
+  </div><!-- /controls -->
+  </div><!-- /right-col -->
+</div><!-- /workspace -->
 
 <script>
 'use strict';
@@ -820,22 +859,89 @@ g('dlBtn').addEventListener('click', async ()=>{
 });
 
 // ═══════════════════════════════════════════════════════════════════════
+// EINSTELLUNGEN SPEICHERN / LADEN
+// ═══════════════════════════════════════════════════════════════════════
+const DEFAULTS = {
+  ptSize:'20', density:'50', ptAlpha:'70', saturation:'80', gridType:'hex',
+  tailLen:'60', curl:'0', curvature:'0', curveStart:'67',
+  spread:'60', dissolve:'60', endWidth:'0', origAlpha:'0', dirAngle:15
+};
+const PRESET_KEY = 'pw_preset_v1';
+
+function collectSettings(){
+  return {
+    ptSize:     g('ptSize').value,
+    density:    g('density').value,
+    ptAlpha:    g('ptAlpha').value,
+    saturation: g('saturation').value,
+    gridType:   g('gridType').value,
+    tailLen:    g('tailLen').value,
+    curl:       g('curl').value,
+    curvature:  g('curvature').value,
+    curveStart: g('curveStart').value,
+    spread:     g('spread').value,
+    dissolve:   g('dissolve').value,
+    endWidth:   g('endWidth').value,
+    origAlpha:  g('origAlpha').value,
+    dirAngle:   dirAngle
+  };
+}
+
+function applySettings(s){
+  const sliders = ['ptSize','density','ptAlpha','saturation',
+                   'tailLen','curl','curvature','curveStart',
+                   'spread','dissolve','endWidth','origAlpha'];
+  sliders.forEach(id=>{
+    if(s[id]!==undefined){
+      g(id).value = s[id];
+      g(id).dispatchEvent(new Event('input'));
+    }
+  });
+  if(s.gridType) g('gridType').value = s.gridType;
+  if(s.dirAngle!==undefined) setDirAngle(+s.dirAngle);
+}
+
+function savePreset(){
+  const s = collectSettings();
+  localStorage.setItem(PRESET_KEY, JSON.stringify(s));
+  const now = new Date().toLocaleTimeString('de-AT',{hour:'2-digit',minute:'2-digit'});
+  g('presetInfo').textContent = 'Gespeichert ' + now;
+}
+
+function loadPreset(){
+  const raw = localStorage.getItem(PRESET_KEY);
+  if(!raw){ g('presetInfo').textContent='Keine gespeicherten Einstellungen'; return; }
+  try{
+    applySettings(JSON.parse(raw));
+    g('presetInfo').textContent='Einstellungen geladen';
+    if(srcImg){ buildPrevDots(); render(); }
+  }catch(e){ g('presetInfo').textContent='Fehler beim Laden'; }
+}
+
+function loadDefaults(){
+  applySettings(DEFAULTS);
+  g('presetInfo').textContent='Standardwerte';
+  if(srcImg){ buildPrevDots(); render(); }
+}
+
+g('btnSavePreset').addEventListener('click', savePreset);
+g('btnLoadPreset').addEventListener('click', loadPreset);
+g('btnDefaults').addEventListener('click',   loadDefaults);
+
+// ═══════════════════════════════════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════════════════════════════════
 initWebGL();
-setDirAngle(15); // intern 15° CW = 345° gegen UZS
-g('ptSizeV').textContent    ='2 px';
-g('densityV').textContent   ='50%';
-g('ptAlphaV').textContent   ='70%';
-g('saturationV').textContent='80%';
-g('origAlphaV').textContent ='0%';
-g('tailLenV').textContent   ='60%';
-g('curlV').textContent      ='0';
-g('curvatureV').textContent ='0°';
-g('curveStartV').textContent='67%';
-g('spreadV').textContent    ='60';
-g('dissolveV').textContent  ='60%';
-g('endWidthV').textContent  ='0%';
+
+// Beim Start: letzte Einstellungen laden falls vorhanden, sonst Defaults
+const savedPreset = localStorage.getItem(PRESET_KEY);
+if(savedPreset){
+  try{ applySettings(JSON.parse(savedPreset)); }
+  catch(e){ applySettings(DEFAULTS); }
+} else {
+  applySettings(DEFAULTS);
+}
+
 render();
 if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
 </script>
