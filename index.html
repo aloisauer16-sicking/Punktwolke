@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#111111">
 <meta name="description" content="Foto in Punktwolke mit Rauchfahne verwandeln">
 <link rel="manifest" href="manifest.json">
-<title>Punktwolke 03F</title>
+<title>Punktwolke 03G</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:system-ui,sans-serif;background:#1a1a1a;color:#eee;min-height:100vh;}
@@ -17,7 +17,7 @@ header h1{font-size:12px;font-weight:500;color:#fff;letter-spacing:.01em;white-s
 /* ── Zweispalten-Layout ── */
 .workspace{display:flex;gap:10px;padding:10px;max-width:1400px;margin:0 auto;min-height:calc(100vh - 41px);}
 .left-col{flex:3;min-width:0;display:flex;flex-direction:column;gap:10px;}
-.right-col{flex:1;min-width:200px;max-width:280px;display:flex;flex-direction:column;gap:8px;overflow-y:auto;max-height:calc(100vh - 61px);padding-right:2px;}
+.right-col{flex:1;min-width:200px;max-width:280px;display:flex;flex-direction:column;gap:8px;overflow-y:auto;height:calc(100vh - 61px);position:sticky;top:10px;padding-right:2px;align-self:flex-start;}
 
 /* Dropzone */
 .dz{border:2px dashed #444;border-radius:10px;padding:14px;text-align:center;cursor:pointer;background:#222;position:relative;transition:border-color .2s;flex-shrink:0;}
@@ -89,7 +89,7 @@ button.small{font-size:11px;padding:5px 10px;}
     <circle cx="4" cy="17" r="2" fill="#fff" opacity=".4"/>
     <circle cx="20" cy="18" r="1" fill="#fff" opacity=".3"/>
   </svg>
-  <h1>Punktwolke 03F &nbsp;©&thinsp;Alois Auer –&thinsp;2026</h1>
+  <h1>Punktwolke 03G &nbsp;©&thinsp;Alois Auer –&thinsp;2026</h1>
 </header>
 
 <div class="workspace">
@@ -127,7 +127,7 @@ button.small{font-size:11px;padding:5px 10px;}
     <div class="sec">PUNKTE</div>
     <div class="cr">
       <label>Punktgrösse</label>
-      <input type="range" id="ptSize" min="1" max="1000" value="20" step="1">
+      <input type="range" id="ptSize" min="1" max="250" value="20" step="1">
       <span class="val" id="ptSizeV">2 px</span>
     </div>
     <div class="cr">
@@ -168,7 +168,7 @@ button.small{font-size:11px;padding:5px 10px;}
           <span class="dial-deg" id="dialDeg">0°</span>
         </div>
         <div class="dir-slider-wrap">
-          <input type="range" id="dirSlider" min="0" max="345" value="345" step="15">
+          <input type="range" id="dirSlider" min="0" max="345" value="0" step="15">
           <div class="dir-slider-label">0° ←→ 360° gegen Uhrzeigersinn</div>
         </div>
       </div>
@@ -415,6 +415,20 @@ bindSlider('spread',    'spreadV',    '',    null, scheduleRender);
 bindSlider('dissolve',  'dissolveV',  '%',   null, scheduleRender);
 bindSlider('endWidth',  'endWidthV',  '%',   null, scheduleRender);
 g('gridType').addEventListener('change',()=>{ buildPrevDots(); scheduleRender(); });
+
+// ═══════════════════════════════════════════════════════════════════════
+// CURSOR L/R TASTATURSTEUERUNG FÜR ALLE REGLER
+// ═══════════════════════════════════════════════════════════════════════
+document.querySelectorAll('input[type=range]').forEach(sl=>{
+  // Bereits eingebaute Browser-Pfeiltasten funktionieren für range-Inputs nativ.
+  // Wir ergänzen: nach jeder Taste das 'input'-Event auslösen (für Anzeige + Render).
+  sl.addEventListener('keydown',function(e){
+    if(e.key==='ArrowLeft'||e.key==='ArrowRight'||e.key==='ArrowUp'||e.key==='ArrowDown'){
+      // Browser ändert .value automatisch; wir feuern input nach kurzer Verzögerung
+      setTimeout(()=>this.dispatchEvent(new Event('input')),0);
+    }
+  });
+});
 
 // ═══════════════════════════════════════════════════════════════════════
 // BILD LADEN
@@ -864,7 +878,7 @@ g('dlBtn').addEventListener('click', async ()=>{
 const DEFAULTS = {
   ptSize:'20', density:'50', ptAlpha:'70', saturation:'80', gridType:'hex',
   tailLen:'60', curl:'0', curvature:'0', curveStart:'67',
-  spread:'60', dissolve:'60', endWidth:'0', origAlpha:'0', dirAngle:15
+  spread:'60', dissolve:'60', endWidth:'0', origAlpha:'0', dirAngle:0
 };
 const PRESET_KEY = 'pw_preset_v1';
 
