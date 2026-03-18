@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#111111">
 <meta name="description" content="Foto in Punktwolke mit Rauchfahne verwandeln">
 <link rel="manifest" href="manifest.json">
-<title>Punktwolke 03A</title>
+<title>Punktwolke 03D</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:system-ui,sans-serif;background:#1a1a1a;color:#eee;min-height:100vh;}
@@ -26,43 +26,26 @@ header h1{font-size:12px;font-weight:500;color:#fff;letter-spacing:.01em;white-s
 .cr input[type=range]{flex:1;accent-color:#fff;}
 .cr .val{font-size:12px;font-weight:600;min-width:52px;text-align:right;color:#fff;}
 .cr select{flex:1;font-size:12px;padding:4px 8px;border-radius:6px;border:1px solid #444;background:#333;color:#eee;}
-
-/* ── Richtungsregler ── */
+/* Richtungsregler */
 .dir-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
-.dir-row > label{font-size:12px;color:#aaa;min-width:130px;flex-shrink:0;}
+.dir-row>label{font-size:12px;color:#aaa;min-width:130px;flex-shrink:0;}
 .dir-controls{display:flex;align-items:center;gap:10px;flex:1;flex-wrap:wrap;}
-.dial{
-  width:54px;height:54px;border-radius:50%;
-  background:radial-gradient(circle at 35% 35%,#3a3a3a,#1e1e1e);
-  border:2px solid #555;position:relative;
-  cursor:grab;touch-action:none;user-select:none;flex-shrink:0;outline:none;
-}
+.dial{width:54px;height:54px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#3a3a3a,#1e1e1e);border:2px solid #555;position:relative;cursor:grab;touch-action:none;user-select:none;flex-shrink:0;outline:none;}
 .dial:focus{border-color:#aaa;}
 .dial:active{cursor:grabbing;}
-.dial-tick{position:absolute;width:2px;height:5px;background:#3a3a3a;border-radius:1px;
-  top:4px;left:50%;margin-left:-1px;transform-origin:1px 23px;}
+.dial-tick{position:absolute;width:2px;height:5px;background:#3a3a3a;border-radius:1px;top:4px;left:50%;margin-left:-1px;transform-origin:1px 23px;}
 .dial-tick.major{background:#555;height:7px;}
-.dial-needle{
-  position:absolute;top:50%;left:50%;
-  width:2px;height:19px;
-  background:linear-gradient(to top,#fff,rgba(255,255,255,0.3));
-  border-radius:1px;transform-origin:50% 100%;
-  margin-left:-1px;margin-top:-19px;
-}
-.dial-info{display:flex;flex-direction:column;gap:1px;min-width:70px;}
+.dial-needle{position:absolute;top:50%;left:50%;width:2px;height:19px;background:linear-gradient(to top,#fff,rgba(255,255,255,0.3));border-radius:1px;transform-origin:50% 100%;margin-left:-1px;margin-top:-19px;}
+.dial-info{display:flex;flex-direction:column;gap:1px;min-width:60px;}
 .dial-sym{font-size:17px;line-height:1.2;}
 .dial-lbl{font-size:10px;color:#888;}
 .dial-deg{font-size:10px;color:#555;}
 .dir-slider-wrap{display:flex;flex-direction:column;gap:3px;flex:1;min-width:100px;}
 .dir-slider-wrap input[type=range]{width:100%;accent-color:#fff;}
 .dir-slider-label{font-size:10px;color:#555;text-align:center;}
-
 .canvas-wrap{border-radius:12px;overflow:hidden;background:#111;margin-bottom:10px;position:relative;}
 canvas{display:block;width:100%;height:auto;background:#111;}
-.prev-badge{
-  position:absolute;bottom:8px;right:10px;font-size:10px;color:#555;
-  background:rgba(0,0,0,.5);padding:2px 6px;border-radius:4px;pointer-events:none;
-}
+.prev-badge{position:absolute;bottom:8px;right:10px;font-size:10px;color:#555;background:rgba(0,0,0,.5);padding:2px 6px;border-radius:4px;pointer-events:none;}
 .btn-row{display:flex;gap:8px;flex-wrap:wrap;}
 button{font-size:13px;padding:10px 18px;border-radius:8px;border:1px solid #444;background:#333;color:#eee;cursor:pointer;font-weight:500;}
 button:hover{background:#444;}
@@ -82,7 +65,7 @@ button:disabled{opacity:.4;cursor:default;}
     <circle cx="4" cy="17" r="2" fill="#fff" opacity=".4"/>
     <circle cx="20" cy="18" r="1" fill="#fff" opacity=".3"/>
   </svg>
-  <h1>Punktwolke 03C &nbsp;©&thinsp;Alois Auer –&thinsp;2026</h1>
+  <h1>Punktwolke 03D &nbsp;©&thinsp;Alois Auer –&thinsp;2026</h1>
 </header>
 
 <div class="main">
@@ -95,13 +78,13 @@ button:disabled{opacity:.4;cursor:default;}
     <div class="sec">PUNKTE</div>
     <div class="cr">
       <label>Punktgrösse</label>
-      <input type="range" id="ptSize" min="1" max="200" value="60" step="1">
-      <span class="val" id="ptSizeV">6.0 px</span>
+      <input type="range" id="ptSize" min="1" max="1000" value="20" step="1">
+      <span class="val" id="ptSizeV">2 px</span>
     </div>
     <div class="cr">
       <label>Punktdichte</label>
-      <input type="range" id="density" min="1" max="100" value="20" step="1">
-      <span class="val" id="densityV">● ● ○</span>
+      <input type="range" id="density" min="1" max="100" value="50" step="1">
+      <span class="val" id="densityV">50%</span>
     </div>
     <div class="cr">
       <label>Raster</label>
@@ -114,13 +97,13 @@ button:disabled{opacity:.4;cursor:default;}
     </div>
     <div class="cr">
       <label>Transparenz</label>
-      <input type="range" id="ptAlpha" min="10" max="100" value="90" step="1">
-      <span class="val" id="ptAlphaV">90%</span>
+      <input type="range" id="ptAlpha" min="10" max="100" value="70" step="1">
+      <span class="val" id="ptAlphaV">70%</span>
     </div>
     <div class="cr">
       <label>Farbsättigung</label>
-      <input type="range" id="saturation" min="0" max="100" value="100" step="1">
-      <span class="val" id="saturationV">100%</span>
+      <input type="range" id="saturation" min="0" max="100" value="80" step="1">
+      <span class="val" id="saturationV">80%</span>
     </div>
 
     <div class="sec">ORIGINALBILD</div>
@@ -143,9 +126,8 @@ button:disabled{opacity:.4;cursor:default;}
           <span class="dial-deg" id="dialDeg">0°</span>
         </div>
         <div class="dir-slider-wrap">
-          <!-- Schieber: links=0°(rechts) → rechts=345° (gegen UZS = umgekehrt) -->
           <input type="range" id="dirSlider" min="0" max="23" value="0" step="1">
-          <div class="dir-slider-label">← gegen Uhrzeigersinn &nbsp;·&nbsp; im Uhrzeigersinn →</div>
+          <div class="dir-slider-label">← gegen Uhrzeigersinn · im Uhrzeigersinn →</div>
         </div>
       </div>
     </div>
@@ -156,8 +138,8 @@ button:disabled{opacity:.4;cursor:default;}
     </div>
     <div class="cr">
       <label>Schwung</label>
-      <input type="range" id="curl" min="-80" max="80" value="25" step="1">
-      <span class="val" id="curlV">25</span>
+      <input type="range" id="curl" min="-80" max="80" value="0" step="1">
+      <span class="val" id="curlV">0</span>
     </div>
     <div class="cr">
       <label>Kurve (Bogen)</label>
@@ -171,8 +153,8 @@ button:disabled{opacity:.4;cursor:default;}
     </div>
     <div class="cr">
       <label>Streuung</label>
-      <input type="range" id="spread" min="0" max="80" value="30" step="1">
-      <span class="val" id="spreadV">30</span>
+      <input type="range" id="spread" min="0" max="80" value="60" step="1">
+      <span class="val" id="spreadV">60</span>
     </div>
     <div class="cr">
       <label>Verflüchtigung</label>
@@ -180,7 +162,7 @@ button:disabled{opacity:.4;cursor:default;}
       <span class="val" id="dissolveV">60%</span>
     </div>
     <div class="cr">
-      <label>Endbreite</label>
+      <label>Wolkenbreite Ende</label>
       <input type="range" id="endWidth" min="0" max="100" value="0" step="1">
       <span class="val" id="endWidthV">0%</span>
     </div>
@@ -199,76 +181,100 @@ button:disabled{opacity:.4;cursor:default;}
 </div>
 
 <script>
-// ═══════════════════════════════════════════════════════════════════════════
+'use strict';
+// ═══════════════════════════════════════════════════════════════════════
 // GLOBALS
-// ═══════════════════════════════════════════════════════════════════════════
-let srcImg       = null;
-let srcFileName  = 'punktwolke';   // Originalname ohne Extension
-let dotDataPrev  = [];
-let saveIdx      = 1;
-let lastSaveName = localStorage.getItem('pw_lastSaveName') || '';
-let dirAngle     = 0;              // 0–345°, 15°-Schritte
-let renderTimer  = null;
+// ═══════════════════════════════════════════════════════════════════════
+let srcImg      = null;
+let srcFileName = 'punktwolke';
+let dotDataPrev = [];
+let saveIdx     = 1;
+let dirAngle    = 0;        // 0–345°, 15°-Schritte
+let renderTimer = null;
+const PREV_MAX  = 800;
 
-const PREV_MAX = 800;
-
+// WebGL
 const cv = document.getElementById('cv');
-let gl=null, glProg=null, glBuf=null, useGL=false;
+let gl=null, glProg=null, glBuf=null, glTexProg=null, glQuadBuf=null;
+let useGL = false;
 
 function g(id){ return document.getElementById(id); }
+
+// Punktgrösse: Slider 1–1000 → 0.1–100 px
 function ptSizeVal(){ return +g('ptSize').value / 10; }
 
-// Punktdichte → Schrittweite in Pixeln
-// Slider 1 (links, grob) → step 60, Slider 100 (rechts, dicht) → step 1
-function densityStep(){
-  const v = +g('density').value;
-  return Math.max(1, Math.round(60 * Math.pow(1/60, (v-1)/99)));
+// Punktdichte: relativ zur Bilddiagonale
+// Slider 1 (locker) → Schritt = 8% Diagonale
+// Slider 100 (dicht) → Schritt = 0.3% Diagonale
+// Exponentiell damit Änderungen über gesamten Bereich spürbar sind
+function densityStep(diagPx){
+  const v = +g('density').value / 100; // 0..1
+  const maxStep = diagPx * 0.08;
+  const minStep = diagPx * 0.003;
+  return Math.max(1, minStep * Math.pow(maxStep/minStep, 1-v));
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// WEBGL SETUP
-// ═══════════════════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════════════
+// WEBGL INIT
+// ═══════════════════════════════════════════════════════════════════════
 function initWebGL(){
   try{
     gl = cv.getContext('webgl',{antialias:true,preserveDrawingBuffer:true})
       || cv.getContext('experimental-webgl',{antialias:true,preserveDrawingBuffer:true});
     if(!gl) throw 'no webgl';
-    const vs=`
-      attribute vec2 a_pos; attribute vec4 a_color; attribute float a_size;
-      uniform vec2 u_res; varying vec4 v_color;
-      void main(){
-        vec2 clip=(a_pos/u_res)*2.0-1.0;
-        gl_Position=vec4(clip.x,-clip.y,0,1);
-        gl_PointSize=a_size; v_color=a_color;
-      }`;
-    const fs=`
-      precision mediump float; varying vec4 v_color;
-      void main(){
-        float d=length(gl_PointCoord-vec2(0.5));
-        if(d>0.5) discard;
-        gl_FragColor=v_color;
-      }`;
-    const cs=(type,src)=>{
+    const mkShader=(type,src)=>{
       const s=gl.createShader(type);
       gl.shaderSource(s,src); gl.compileShader(s);
       if(!gl.getShaderParameter(s,gl.COMPILE_STATUS)) throw gl.getShaderInfoLog(s);
       return s;
     };
-    glProg=gl.createProgram();
-    gl.attachShader(glProg,cs(gl.VERTEX_SHADER,vs));
-    gl.attachShader(glProg,cs(gl.FRAGMENT_SHADER,fs));
-    gl.linkProgram(glProg);
-    if(!gl.getProgramParameter(glProg,gl.LINK_STATUS)) throw gl.getProgramInfoLog(glProg);
-    glBuf=gl.createBuffer();
+    const mkProg=(vs,fs)=>{
+      const p=gl.createProgram();
+      gl.attachShader(p,mkShader(gl.VERTEX_SHADER,vs));
+      gl.attachShader(p,mkShader(gl.FRAGMENT_SHADER,fs));
+      gl.linkProgram(p);
+      if(!gl.getProgramParameter(p,gl.LINK_STATUS)) throw gl.getProgramInfoLog(p);
+      return p;
+    };
+    // Punkt-Programm
+    glProg = mkProg(
+      `attribute vec2 a_pos;attribute vec4 a_color;attribute float a_size;
+       uniform vec2 u_res;varying vec4 v_color;
+       void main(){
+         vec2 c=(a_pos/u_res)*2.0-1.0;
+         gl_Position=vec4(c.x,-c.y,0,1);
+         gl_PointSize=a_size; v_color=a_color;
+       }`,
+      `precision mediump float;varying vec4 v_color;
+       void main(){
+         float d=length(gl_PointCoord-vec2(0.5));
+         if(d>0.5)discard;
+         gl_FragColor=v_color;
+       }`
+    );
+    // Textur-Programm (für Überlagerung)
+    glTexProg = mkProg(
+      `attribute vec2 a_pos;varying vec2 v_uv;
+       void main(){v_uv=a_pos*0.5+0.5;gl_Position=vec4(a_pos,0,1);}`,
+      `precision mediump float;uniform sampler2D u_tex;varying vec2 v_uv;
+       void main(){gl_FragColor=texture2D(u_tex,v_uv);}`
+    );
+    glBuf     = gl.createBuffer();
+    glQuadBuf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER,glQuadBuf);
+    gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);
-    useGL=true;
-  }catch(e){ console.warn('WebGL Fallback Canvas2D:',e); useGL=false; }
+    useGL = true;
+  }catch(e){
+    console.warn('WebGL nicht verfügbar, Canvas2D Fallback:',e);
+    useGL = false;
+  }
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// RICHTUNGSREGLER
-// ═══════════════════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════════════
+// RICHTUNGS-DREHREGLER
+// ═══════════════════════════════════════════════════════════════════════
 const dial      = g('dirDial');
 const dialNeedle= g('dialNeedle');
 const dirSlider = g('dirSlider');
@@ -282,18 +288,18 @@ for(let i=0;i<24;i++){
 dial.appendChild(dialNeedle);
 
 const DIR_TABLE=[
-  {sym:'→',lbl:'rechts'},         {sym:'↘',lbl:'+15°'},
-  {sym:'↘',lbl:'+30°'},           {sym:'↘',lbl:'rechts-unten'},
-  {sym:'↓',lbl:'+60°'},           {sym:'↓',lbl:'+75°'},
-  {sym:'↓',lbl:'unten'},          {sym:'↙',lbl:'+105°'},
-  {sym:'↙',lbl:'+120°'},          {sym:'↙',lbl:'links-unten'},
-  {sym:'←',lbl:'+150°'},          {sym:'←',lbl:'+165°'},
-  {sym:'←',lbl:'links'},          {sym:'↖',lbl:'+195°'},
-  {sym:'↖',lbl:'+210°'},          {sym:'↖',lbl:'links-oben'},
-  {sym:'↑',lbl:'+240°'},          {sym:'↑',lbl:'+255°'},
-  {sym:'↑',lbl:'oben'},           {sym:'↗',lbl:'+285°'},
-  {sym:'↗',lbl:'+300°'},          {sym:'↗',lbl:'rechts-oben'},
-  {sym:'→',lbl:'+330°'},          {sym:'→',lbl:'+345°'},
+  {sym:'→',lbl:'rechts'},    {sym:'↘',lbl:'+15°'},
+  {sym:'↘',lbl:'+30°'},      {sym:'↘',lbl:'rechts-unten'},
+  {sym:'↓',lbl:'+60°'},      {sym:'↓',lbl:'+75°'},
+  {sym:'↓',lbl:'unten'},     {sym:'↙',lbl:'+105°'},
+  {sym:'↙',lbl:'+120°'},     {sym:'↙',lbl:'links-unten'},
+  {sym:'←',lbl:'+150°'},     {sym:'←',lbl:'+165°'},
+  {sym:'←',lbl:'links'},     {sym:'↖',lbl:'+195°'},
+  {sym:'↖',lbl:'+210°'},     {sym:'↖',lbl:'links-oben'},
+  {sym:'↑',lbl:'+240°'},     {sym:'↑',lbl:'+255°'},
+  {sym:'↑',lbl:'oben'},      {sym:'↗',lbl:'+285°'},
+  {sym:'↗',lbl:'+300°'},     {sym:'↗',lbl:'rechts-oben'},
+  {sym:'→',lbl:'+330°'},     {sym:'→',lbl:'+345°'},
 ];
 
 function updateDialUI(){
@@ -302,15 +308,8 @@ function updateDialUI(){
   g('dialSym').textContent=DIR_TABLE[idx].sym;
   g('dialLbl').textContent=DIR_TABLE[idx].lbl;
   g('dialDeg').textContent=dirAngle+'°';
-  // Schieber: gegen Uhrzeigersinn = links, im Uhrzeigersinn = rechts
-  // Schritt 0=0°, 1=15°, …, 23=345° → aber Richtung umdrehen:
-  // Wert 0 links = 0°, nach rechts dreht im Uhrzeigersinn (= steigende Winkel)
-  // ABER User will: links=gegen UZS, rechts=im UZS
-  // gegen UZS = steigende Winkel von 0 nach rechts (0°,15°,30°...) ← standard
-  // „Schieber Richtung umdrehen": Schieber-links = hoher Winkel, rechts = niedriger
-  // Wir mappen: Schieber-Wert v (0..23) → Winkel = (23-v)*15
-  const sliderVal = Math.round((360 - dirAngle) / 15) % 24;
-  if(+dirSlider.value !== sliderVal) dirSlider.value = sliderVal;
+  const sv=Math.round((360-dirAngle)/15)%24;
+  if(+dirSlider.value!==sv) dirSlider.value=sv;
 }
 
 function setDirAngle(a){
@@ -319,7 +318,6 @@ function setDirAngle(a){
   scheduleRender();
 }
 
-// Drag
 let dragging=false, dragLastA=0;
 function evAngle(e){
   const r=dial.getBoundingClientRect();
@@ -347,20 +345,13 @@ dial.addEventListener('keydown',e=>{
   if(e.key==='ArrowUp'  ||e.key==='ArrowRight'){ setDirAngle(dirAngle+15); e.preventDefault(); }
   if(e.key==='ArrowDown'||e.key==='ArrowLeft') { setDirAngle(dirAngle-15); e.preventDefault(); }
 });
-
-// Schieber: Wert 0 (links) = 0°, nach rechts im Uhrzeigersinn
-// Umkehr: Schieber-Wert v → Winkel = (23-v)*15 war alte Idee
-// Jetzt: links=gegen UZS geht zu 0, rechts geht zu 345 → Schieber normal
-// ABER „Richtung umdrehen" bedeutet: Schieber-links = größter Winkel
-// → Winkel = (23 - sliderVal) * 15
 dirSlider.addEventListener('input',function(){
-  const angle = (24 - +this.value) % 24 * 15;
-  setDirAngle(angle);
+  setDirAngle((24-+this.value)%24*15);
 });
 
-// ═══════════════════════════════════════════════════════════════════════════
-// SLIDER
-// ═══════════════════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════════════
+// SLIDER BINDEN
+// ═══════════════════════════════════════════════════════════════════════
 function bindSlider(id,outId,suffix,dispFn,fn){
   g(id).addEventListener('input',function(){
     const v=+this.value;
@@ -368,34 +359,28 @@ function bindSlider(id,outId,suffix,dispFn,fn){
     if(fn)fn();
   });
 }
-function densityDisplay(v){
-  const s=Math.round(60*Math.pow(1/60,(v-1)/99));
-  if(s>=30)return '● ○ ○';
-  if(s>=8) return '● ● ○';
-  return '● ● ●';
-}
-bindSlider('ptSize',   'ptSizeV',    ' px',v=>(v/10).toFixed(1),scheduleRender);
-bindSlider('density',  'densityV',   '',   densityDisplay,()=>{buildPrevDots();scheduleRender();});
-bindSlider('ptAlpha',  'ptAlphaV',   '%',  null,scheduleRender);
-bindSlider('saturation','saturationV','%', null,scheduleRender);
-bindSlider('origAlpha','origAlphaV', '%',  null,scheduleRender);
-bindSlider('tailLen',  'tailLenV',   '%',  null,scheduleRender);
-bindSlider('curl',     'curlV',      '',   null,scheduleRender);
-bindSlider('curvature', 'curvatureV',  '°', null,scheduleRender);
-bindSlider('curveStart','curveStartV','%', null,scheduleRender);
-bindSlider('spread',   'spreadV',    '',   null,scheduleRender);
-bindSlider('dissolve',  'dissolveV',  '%', null,scheduleRender);
-bindSlider('endWidth',  'endWidthV',  '%', null,scheduleRender);
-g('gridType').addEventListener('change',()=>{buildPrevDots();scheduleRender();});
+bindSlider('ptSize',    'ptSizeV',    ' px', v=>Math.round(v/10),  scheduleRender);
+bindSlider('density',   'densityV',   '%',   null, ()=>{ buildPrevDots(); scheduleRender(); });
+bindSlider('ptAlpha',   'ptAlphaV',   '%',   null, scheduleRender);
+bindSlider('saturation','saturationV','%',   null, scheduleRender);
+bindSlider('origAlpha', 'origAlphaV', '%',   null, scheduleRender);
+bindSlider('tailLen',   'tailLenV',   '%',   null, scheduleRender);
+bindSlider('curl',      'curlV',      '',    null, scheduleRender);
+bindSlider('curvature', 'curvatureV', '°',   null, scheduleRender);
+bindSlider('curveStart','curveStartV','%',   null, scheduleRender);
+bindSlider('spread',    'spreadV',    '',    null, scheduleRender);
+bindSlider('dissolve',  'dissolveV',  '%',   null, scheduleRender);
+bindSlider('endWidth',  'endWidthV',  '%',   null, scheduleRender);
+g('gridType').addEventListener('change',()=>{ buildPrevDots(); scheduleRender(); });
 
-// ═══════════════════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════════════
 // BILD LADEN
-// ═══════════════════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════════════
 g('fileIn').addEventListener('change',function(){
   if(!this.files[0])return;
-  // Dateiname ohne Extension merken
-  srcFileName = this.files[0].name.replace(/\.[^.]+$/,'');
-  saveIdx = 1; // Index zurücksetzen bei neuem Bild
+  srcFileName=this.files[0].name.replace(/\.[^.]+$/,'');
+  // Index aus localStorage laden
+  saveIdx=parseInt(localStorage.getItem('pw_idx_'+srcFileName))||1;
   const r=new FileReader();
   r.onload=e=>{
     const img=new Image();
@@ -411,23 +396,24 @@ g('fileIn').addEventListener('change',function(){
   r.readAsDataURL(this.files[0]);
 });
 
-// ═══════════════════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════════════
 // HILFSFUNKTIONEN
-// ═══════════════════════════════════════════════════════════════════════════
-function adjustSaturation(r,g,b,satPct){
-  if(satPct>=100)return[r,g,b];
+// ═══════════════════════════════════════════════════════════════════════
+function adjustSat(r,g,b,pct){
+  if(pct>=100)return[r,g,b];
   const gray=Math.round(((Math.max(r,g,b)+Math.min(r,g,b))/2/255)*255);
-  const f=satPct/100;
+  const f=pct/100;
   return[Math.round(gray+(r-gray)*f),Math.round(gray+(g-gray)*f),Math.round(gray+(b-gray)*f)];
 }
+
 function previewScale(){
   if(!srcImg)return 1;
   return Math.min(PREV_MAX/srcImg.width,PREV_MAX/srcImg.height,1);
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// RASTERPUNKTE SAMPELN
-// ═══════════════════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════════════
+// PUNKTE SAMPELN — relativ zur Bilddiagonale
+// ═══════════════════════════════════════════════════════════════════════
 function sampleDots(imgEl, targetW, targetH, step, gridType){
   const offC=document.createElement('canvas');
   offC.width=targetW; offC.height=targetH;
@@ -435,44 +421,39 @@ function sampleDots(imgEl, targetW, targetH, step, gridType){
   offCtx.drawImage(imgEl,0,0,targetW,targetH);
   const px=offCtx.getImageData(0,0,targetW,targetH).data;
   const dots=[];
-  const s=Math.max(0.5,step);
+  const s=Math.max(1,step);
 
   if(gridType==='hex'){
-    // Hexagonalraster: gerade Zeilen normal, ungerade um s/2 versetzt
-    // Zeilenabstand = s * sqrt(3)/2 für dichteste Packung
-    const rowH = s * Math.sqrt(3)/2;
+    const rowH=s*Math.sqrt(3)/2;
     let row=0;
-    for(let y=rowH/2; y<targetH; y+=rowH, row++){
-      const xOffset = (row%2===0) ? s/2 : s;
-      for(let x=xOffset; x<targetW; x+=s){
-        const xi=Math.floor(x), yi=Math.floor(y);
-        if(xi<0||xi>=targetW||yi<0||yi>=targetH)continue;
+    for(let y=rowH/2;y<targetH;y+=rowH,row++){
+      const xOff=(row%2===0)?s/2:s;
+      for(let x=xOff;x<targetW;x+=s){
+        const xi=Math.floor(x),yi=Math.floor(y);
+        if(xi>=targetW||yi>=targetH)continue;
         const i=(yi*targetW+xi)*4;
         if(px[i+3]<10)continue;
         dots.push({nx:x/targetW,ny:y/targetH,r:px[i],g:px[i+1],b:px[i+2],a:px[i+3]});
       }
     }
   } else if(gridType==='triangle'){
-    // Gleichseitiges Dreieckraster: zwei versetzte Hex-Raster überlagert
-    // = Hex-Raster mit halbem Zeilenversatz
-    const rowH = s * Math.sqrt(3)/2;
+    const rowH=s*Math.sqrt(3)/2;
     let row=0;
-    for(let y=rowH/2; y<targetH; y+=rowH, row++){
-      const xOff = (row%2===0) ? s/4 : s*3/4;
-      for(let x=xOff; x<targetW; x+=s){
-        const xi=Math.floor(x), yi=Math.floor(y);
-        if(xi<0||xi>=targetW||yi<0||yi>=targetH)continue;
+    for(let y=rowH/2;y<targetH;y+=rowH,row++){
+      const xOff=(row%2===0)?s/4:s*3/4;
+      for(let x=xOff;x<targetW;x+=s){
+        const xi=Math.floor(x),yi=Math.floor(y);
+        if(xi>=targetW||yi>=targetH)continue;
         const i=(yi*targetW+xi)*4;
         if(px[i+3]<10)continue;
         dots.push({nx:x/targetW,ny:y/targetH,r:px[i],g:px[i+1],b:px[i+2],a:px[i+3]});
       }
     }
   } else {
-    // Quadratisches Raster
-    for(let y=s/2; y<targetH; y+=s){
-      for(let x=s/2; x<targetW; x+=s){
-        const xi=Math.floor(x), yi=Math.floor(y);
-        if(xi<0||xi>=targetW||yi<0||yi>=targetH)continue;
+    for(let y=s/2;y<targetH;y+=s){
+      for(let x=s/2;x<targetW;x+=s){
+        const xi=Math.floor(x),yi=Math.floor(y);
+        if(xi>=targetW||yi>=targetH)continue;
         const i=(yi*targetW+xi)*4;
         if(px[i+3]<10)continue;
         dots.push({nx:x/targetW,ny:y/targetH,r:px[i],g:px[i+1],b:px[i+2],a:px[i+3]});
@@ -484,231 +465,143 @@ function sampleDots(imgEl, targetW, targetH, step, gridType){
 
 function buildPrevDots(){
   if(!srcImg)return;
-  const sc=previewScale();
+  const sc  =previewScale();
   const prevW=Math.round(srcImg.width*sc);
   const prevH=Math.round(srcImg.height*sc);
-  const step=densityStep()*sc;
-  const gt=g('gridType').value;
-  dotDataPrev=sampleDots(srcImg,prevW,prevH,step,gt);
+  const diag=Math.sqrt(prevW*prevW+prevH*prevH);
+  const step=densityStep(diag);
+  dotDataPrev=sampleDots(srcImg,prevW,prevH,step,g('gridType').value);
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════════════
 // CANVAS-DIMENSIONEN
-// ═══════════════════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════════════
 function canvasDims(imgW,imgH,tailLen,dx,dy){
   const tailPx=Math.max(imgW,imgH)*tailLen;
-  const padRight =dx>0?tailPx*dx:0;
-  const padLeft  =dx<0?tailPx*(-dx):0;
-  const padBottom=dy>0?tailPx*dy:0;
-  const padTop   =dy<0?tailPx*(-dy):0;
   return{
-    w:Math.ceil(imgW+padRight+padLeft),
-    h:Math.ceil(imgH+padBottom+padTop),
-    imgX:padLeft, imgY:padTop
+    w:Math.ceil(imgW+(dx>0?tailPx*dx:0)+(dx<0?tailPx*(-dx):0)),
+    h:Math.ceil(imgH+(dy>0?tailPx*dy:0)+(dy<0?tailPx*(-dy):0)),
+    imgX:dx<0?tailPx*(-dx):0,
+    imgY:dy<0?tailPx*(-dy):0
   };
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// KURVE/BOGEN: Berechnet gekrümmten Pfad für Rauchfahnen-Punkt
-// curvatureDeg: –45..+45 (negativ=gegen UZS, positiv=im UZS)
-// t: 0..1 entlang der Fahne
-// dx,dy: Hauptrichtung
-// gibt {x,y} delta vom Ursprung zurück
-// ═══════════════════════════════════════════════════════════════════════════
-function curvedOffset(t, dist, dx, dy, curvatureDeg){
-  if(Math.abs(curvatureDeg) < 0.5){
-    return { x: dx*dist, y: dy*dist };
+// ═══════════════════════════════════════════════════════════════════════
+// KURVEN-BERECHNUNG — korrekte Bogenkurve
+//
+// Idee: Die Rauchfahne beschreibt einen Kreisbogen.
+// curvatureDeg = Gesamtbiegewinkel der Fahne in Grad (–45..+45)
+// t = Position entlang der Fahne (0..1)
+// tCurveLocal = normiertes t innerhalb des Kurvenbereichs (0..1)
+//
+// Für jeden Schritt t wird die Richtung um curvatureDeg*tCurveLocal
+// gedreht, und der Punkt liegt auf dem resultierenden Bogen.
+// Der Bogen wird numerisch integriert (STEPS Schritte → exakt genug).
+// ═══════════════════════════════════════════════════════════════════════
+function buildTailPath(STEPS, tailPx, dx, dy, curl, curvature, curveStart, spread, scaleFactor){
+  // Gibt Array von {x,y,t} zurück — Bogenpositionen relativ zum Ursprung
+  const path=[];
+  let bx=0,by=0;           // aktueller Bogenpunkt
+  let bdx=dx,bdy=dy;       // aktuelle Richtung (normiert)
+  const stepDist=tailPx/STEPS;
+
+  for(let s=1;s<=STEPS;s++){
+    const t=s/STEPS;
+    // Wie weit sind wir im Kurvenbereich?
+    const tCurve=t<curveStart?0:(t-curveStart)/(1-curveStart+1e-6);
+    // Gesamte Biegung bis hier: curvature*tCurve Grad
+    const bendPerStep=(tCurve>0)?
+      (curvature*Math.PI/180*(1/(1-curveStart+1e-6)))/STEPS : 0;
+    // Richtung drehen
+    const cosB=Math.cos(bendPerStep), sinB=Math.sin(bendPerStep);
+    const newdx=bdx*cosB-bdy*sinB;
+    const newdy=bdx*sinB+bdy*cosB;
+    bdx=newdx; bdy=newdy;
+    // Schwung: senkrechte Ablenkung
+    const curlOff=curl*scaleFactor*t*t;
+    const perpX=-dy, perpY=dx;  // Ursprungsrichtung senkrecht
+    const noise=(Math.random()-0.5)*spread*scaleFactor*t*2;
+    bx+=bdx*stepDist;
+    by+=bdy*stepDist;
+    path.push({
+      x:bx+perpX*(curlOff+noise),
+      y:by+perpY*(curlOff+noise),
+      t
+    });
   }
-  // Bogenradius aus Kurvatur (Bogenlänge = dist, Mittelpunktswinkel = curvatureDeg*t)
-  const totalAngle = curvatureDeg * Math.PI/180;
-  // Radius so wählen, dass Bogenlänge = dist
-  // Bogenlänge = r * winkel → r = dist / winkel (wenn winkel != 0)
-  const radius = dist / Math.abs(totalAngle);
-  // Winkel des Bogens bis t
-  const arcAngle = totalAngle * t;
-  // Senkrechte zur Hauptrichtung (Krümmungsachse)
-  const perpX = -dy, perpY = dx;
-  // Kreismittelpunkt liegt senkrecht zur Richtung in Abstand radius
-  const sign = totalAngle > 0 ? 1 : -1;
-  const cx = perpX * radius * sign;
-  const cy = perpY * radius * sign;
-  // Punkt auf dem Bogen
-  const startAngle = Math.atan2(-dy, -dx) + Math.PI; // Richtung von Mitte zum Start
-  // Einfacher: Bogen-Formel direkt
-  const cosA = Math.cos(arcAngle), sinA = Math.sin(arcAngle);
-  // Rotation der Richtung um arcAngle
-  const rdx = dx*cosA - dy*sinA * sign;
-  const rdy = dx*sinA * sign + dy*cosA;
-  // Integrierter Bogenpunkt (Kreisformel)
-  const bx = cx + (-cx)*cosA - (-cy)*sinA;
-  const by = cy + (-cx)*sinA + (-cy)*cosA;
-  return { x: bx, y: by };
+  return path;
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// VERTICES BAUEN (für WebGL)
-// ═══════════════════════════════════════════════════════════════════════════
-function buildVertices(dots, imgW, imgH, scaleFactor, params){
+// ═══════════════════════════════════════════════════════════════════════
+// PUNKTE ZEICHNEN (Canvas2D)
+// ═══════════════════════════════════════════════════════════════════════
+function drawDots2D(tCtx, dots, imgW, imgH, scaleFactor, params, imgX, imgY){
   const{ptSize,ptAlpha,curl,curvature,curveStart,spread,dissolve,endWidth,satPct,tailLen,dx,dy}=params;
+  const ptR=(ptSize/2)*scaleFactor;
+  const STEPS=20;
   const tailPx=Math.max(imgW,imgH)*tailLen;
-  const padLeft=dx<0?tailPx*(-dx):0;
-  const padTop =dy<0?tailPx*(-dy):0;
-  const imgX=padLeft, imgY=padTop;
-  const ptR=(ptSize/2)*scaleFactor;
-  const STEPS=18;
-  const perpX=-dy, perpY=dx;
-  const verts=[];
 
   dots.forEach(d=>{
-    const[sr,sg,sb]=adjustSaturation(d.r,d.g,d.b,satPct);
+    const[sr,sg,sb]=adjustSat(d.r,d.g,d.b,satPct);
     const baseA=ptAlpha*d.a/255;
     const px=imgX+d.nx*imgW;
     const py=imgY+d.ny*imgH;
-    verts.push(px,py,sr/255,sg/255,sb/255,baseA,Math.max(0.5,ptR*2));
-    if(tailLen<=0)return;
-    for(let s=1;s<=STEPS;s++){
-      const t=s/STEPS;
-      const dist=t*tailPx;
-      const noise=(Math.random()-0.5)*spread*scaleFactor*t*2;
-      const curlOff=curl*scaleFactor*t*t;
-      // Kurve erst ab curveStart: lokales t innerhalb des Kurvenbereichs
-      const tCurve = t < curveStart ? 0 : (t - curveStart) / (1 - curveStart + 0.001);
-      const bo=curvedOffset(tCurve, dist, dx, dy, curvature);
-      const tx=px+bo.x+perpX*(curlOff+noise);
-      const ty=py+bo.y+perpY*(curlOff+noise);
-      const alpha=baseA*Math.pow(1-t,1.2)*(1-dissolve*t*0.9);
-      if(alpha<=0.01)continue;
-      // Endbreite: 0%=spitz(auf 0 zusammenlaufend), 100%=gleichbleibend
-      // Grösse = ptR * (endWidth + (1-endWidth)*(1-t)) bei dissolve=0
-      const widthFactor = endWidth + (1-endWidth)*(1-t);
-      const sz=Math.max(0.5, ptR*2 * widthFactor * (1 - dissolve*(1-endWidth)*t*0.7));
-      verts.push(tx,ty,sr/255,sg/255,sb/255,Math.min(1,alpha),sz);
-    }
-  });
-  return new Float32Array(verts);
-}
-
-// ═══════════════════════════════════════════════════════════════════════════
-// WEBGL RENDER
-// ═══════════════════════════════════════════════════════════════════════════
-function renderWebGL(dots, imgW, imgH, scaleFactor, params){
-  const{origAlpha,tailLen,dx,dy}=params;
-  const{w,h,imgX,imgY}=canvasDims(imgW,imgH,tailLen,dx,dy);
-
-  // Wenn Überlagerung aktiv: alles auf Offscreen-Canvas2D, dann als Bild in CV
-  // Das vermeidet WebGL/2D-Kontext-Konflikte vollständig.
-  if(origAlpha>0){
-    const tmp=document.createElement('canvas');
-    tmp.width=w; tmp.height=h;
-    const t2=tmp.getContext('2d');
-    t2.fillStyle='#111'; t2.fillRect(0,0,w,h);
-    t2.globalAlpha=origAlpha;
-    t2.drawImage(srcImg,imgX,imgY,imgW,imgH);
-    t2.globalAlpha=1;
-    _drawPoints2D(t2,dots,imgW,imgH,scaleFactor,params,imgX,imgY);
-    // Ergebnis in GL-Canvas via Textur-Blit
-    cv.width=w; cv.height=h;
-    gl.viewport(0,0,w,h);
-    gl.clearColor(17/255,17/255,17/255,1);
-    gl.clear(gl.COLOR_BUFFER_BIT);
-    if(!glTexProg)_initTexProg();
-    const tex=gl.createTexture();
-    gl.bindTexture(gl.TEXTURE_2D,tex);
-    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,true);
-    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
-    gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,tmp);
-    gl.useProgram(glTexProg);
-    gl.bindBuffer(gl.ARRAY_BUFFER,glQuadBuf);
-    const aT=gl.getAttribLocation(glTexProg,'a_pos');
-    gl.enableVertexAttribArray(aT);
-    gl.vertexAttribPointer(aT,2,gl.FLOAT,false,0,0);
-    gl.uniform1i(gl.getUniformLocation(glTexProg,'u_tex'),0);
-    gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
-    gl.deleteTexture(tex);
-    return;
-  }
-
-  // Kein Overlay: schneller WebGL-Punktrender
-  cv.width=w; cv.height=h;
-  gl.viewport(0,0,w,h);
-  gl.clearColor(17/255,17/255,17/255,1);
-  gl.clear(gl.COLOR_BUFFER_BIT);
-  const verts=buildVertices(dots,imgW,imgH,scaleFactor,params);
-  const STRIDE=7;
-  gl.useProgram(glProg);
-  gl.bindBuffer(gl.ARRAY_BUFFER,glBuf);
-  gl.bufferData(gl.ARRAY_BUFFER,verts,gl.DYNAMIC_DRAW);
-  const bpe=Float32Array.BYTES_PER_ELEMENT;
-  gl.uniform2f(gl.getUniformLocation(glProg,'u_res'),w,h);
-  const aPos=gl.getAttribLocation(glProg,'a_pos');
-  const aCol=gl.getAttribLocation(glProg,'a_color');
-  const aSz =gl.getAttribLocation(glProg,'a_size');
-  gl.enableVertexAttribArray(aPos); gl.vertexAttribPointer(aPos,2,gl.FLOAT,false,STRIDE*bpe,0);
-  gl.enableVertexAttribArray(aCol); gl.vertexAttribPointer(aCol,4,gl.FLOAT,false,STRIDE*bpe,2*bpe);
-  gl.enableVertexAttribArray(aSz);  gl.vertexAttribPointer(aSz, 1,gl.FLOAT,false,STRIDE*bpe,6*bpe);
-  gl.drawArrays(gl.POINTS,0,verts.length/STRIDE);
-}
-
-let glTexProg=null,glQuadBuf=null;
-function _initTexProg(){
-  const vs=`attribute vec2 a_pos;varying vec2 v_uv;void main(){v_uv=a_pos*0.5+0.5;gl_Position=vec4(a_pos,0,1);}`;
-  const fs=`precision mediump float;uniform sampler2D u_tex;varying vec2 v_uv;void main(){gl_FragColor=texture2D(u_tex,v_uv);}`;
-  const cs=(t,s)=>{const sh=gl.createShader(t);gl.shaderSource(sh,s);gl.compileShader(sh);return sh;};
-  glTexProg=gl.createProgram();
-  gl.attachShader(glTexProg,cs(gl.VERTEX_SHADER,vs));
-  gl.attachShader(glTexProg,cs(gl.FRAGMENT_SHADER,fs));
-  gl.linkProgram(glTexProg);
-  glQuadBuf=gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER,glQuadBuf);
-  gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);
-}
-
-// ═══════════════════════════════════════════════════════════════════════════
-// CANVAS2D RENDER (Fallback + Export)
-// ═══════════════════════════════════════════════════════════════════════════
-
-// Interne Hilfsfunktion: nur Punkte zeichnen (kein Hintergrund, kein Bild)
-function _drawPoints2D(tCtx, dots, imgW, imgH, scaleFactor, params, imgX, imgY){
-  const{ptSize,ptAlpha,curl,curvature,curveStart,spread,dissolve,endWidth,satPct,tailLen,dx,dy}=params;
-  const ptR=(ptSize/2)*scaleFactor;
-  const STEPS=18;
-  const perpX=-dy, perpY=dx;
-  dots.forEach(d=>{
-    const[sr,sg,sb]=adjustSaturation(d.r,d.g,d.b,satPct);
-    const baseA=ptAlpha*d.a/255;
-    const px=imgX+d.nx*imgW;
-    const py=imgY+d.ny*imgH;
+    // Hauptpunkt
     tCtx.beginPath();
     tCtx.arc(px,py,Math.max(0.3,ptR),0,Math.PI*2);
     tCtx.fillStyle=`rgba(${sr},${sg},${sb},${baseA})`;
     tCtx.fill();
-    if(tailLen<=0)return;
-    for(let s=1;s<=STEPS;s++){
-      const t=s/STEPS;
-      const dist=t*Math.max(imgW,imgH)*tailLen;
-      const noise=(Math.random()-0.5)*spread*scaleFactor*t*2;
-      const curlOff=curl*scaleFactor*t*t;
-      // Kurve erst ab curveStart
-      const tCurve = t < curveStart ? 0 : (t - curveStart) / (1 - curveStart + 0.001);
-      const bo=curvedOffset(tCurve, dist, dx, dy, curvature);
-      const tx=px+bo.x+perpX*(curlOff+noise);
-      const ty=py+bo.y+perpY*(curlOff+noise);
+    if(tailLen<=0||ptR<=0)return;
+    // Bogenpfad berechnen
+    const path=buildTailPath(STEPS,tailPx,dx,dy,curl,curvature,curveStart,spread,scaleFactor);
+    path.forEach(({x,y,t})=>{
       const alpha=baseA*Math.pow(1-t,1.2)*(1-dissolve*t*0.9);
-      if(alpha<=0.01)continue;
-      // Endbreite: 0=spitz, 100=gleichbleibend
-      const widthFactor = endWidth + (1-endWidth)*(1-t);
-      const sz=Math.max(0.3, ptR * widthFactor * (1 - dissolve*(1-endWidth)*t*0.7));
+      if(alpha<=0.01)return;
+      const widthFactor=endWidth+(1-endWidth)*(1-t);
+      const sz=Math.max(0.2,ptR*widthFactor*(1-dissolve*(1-endWidth)*t*0.7));
       tCtx.beginPath();
-      tCtx.arc(tx,ty,sz,0,Math.PI*2);
+      tCtx.arc(px+x,py+y,sz,0,Math.PI*2);
       tCtx.fillStyle=`rgba(${sr},${sg},${sb},${Math.min(1,alpha)})`;
       tCtx.fill();
-    }
+    });
   });
 }
 
-// Vollständiger Canvas2D-Render: Hintergrund + Bild + Punkte
+// ═══════════════════════════════════════════════════════════════════════
+// VERTICES BAUEN (WebGL)
+// ═══════════════════════════════════════════════════════════════════════
+function buildVertices(dots, imgW, imgH, scaleFactor, params){
+  const{ptSize,ptAlpha,curl,curvature,curveStart,spread,dissolve,endWidth,satPct,tailLen,dx,dy}=params;
+  const ptR=(ptSize/2)*scaleFactor;
+  const STEPS=20;
+  const tailPx=Math.max(imgW,imgH)*tailLen;
+  const padLeft=dx<0?tailPx*(-dx):0;
+  const padTop =dy<0?tailPx*(-dy):0;
+  const imgX=padLeft, imgY=padTop;
+  const verts=[];
+
+  dots.forEach(d=>{
+    const[sr,sg,sb]=adjustSat(d.r,d.g,d.b,satPct);
+    const baseA=ptAlpha*d.a/255;
+    const px=imgX+d.nx*imgW;
+    const py=imgY+d.ny*imgH;
+    verts.push(px,py,sr/255,sg/255,sb/255,baseA,Math.max(0.5,ptR*2));
+    if(tailLen<=0||ptR<=0)return;
+    const path=buildTailPath(STEPS,tailPx,dx,dy,curl,curvature,curveStart,spread,scaleFactor);
+    path.forEach(({x,y,t})=>{
+      const alpha=baseA*Math.pow(1-t,1.2)*(1-dissolve*t*0.9);
+      if(alpha<=0.01)return;
+      const widthFactor=endWidth+(1-endWidth)*(1-t);
+      const sz=Math.max(0.5,ptR*2*widthFactor*(1-dissolve*(1-endWidth)*t*0.7));
+      verts.push(px+x,py+y,sr/255,sg/255,sb/255,Math.min(1,alpha),sz);
+    });
+  });
+  return new Float32Array(verts);
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// RENDER-FUNKTIONEN
+// ═══════════════════════════════════════════════════════════════════════
 function renderCanvas2D(tCtx, tCanvas, dots, imgW, imgH, scaleFactor, params){
   const{origAlpha,tailLen,dx,dy}=params;
   const{w,h,imgX,imgY}=canvasDims(imgW,imgH,tailLen,dx,dy);
@@ -719,41 +612,91 @@ function renderCanvas2D(tCtx, tCanvas, dots, imgW, imgH, scaleFactor, params){
     tCtx.drawImage(srcImg,imgX,imgY,imgW,imgH);
     tCtx.globalAlpha=1;
   }
-  _drawPoints2D(tCtx,dots,imgW,imgH,scaleFactor,params,imgX,imgY);
+  drawDots2D(tCtx,dots,imgW,imgH,scaleFactor,params,imgX,imgY);
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// RENDER VORSCHAU
-// ═══════════════════════════════════════════════════════════════════════════
+function renderWebGL(dots, imgW, imgH, scaleFactor, params){
+  const{origAlpha,tailLen,dx,dy}=params;
+  const{w,h,imgX,imgY}=canvasDims(imgW,imgH,tailLen,dx,dy);
+
+  // Bei Überlagerung: auf Offscreen-Canvas2D rendern → als Textur in GL-Canvas blitten
+  // Das ist die einzig zuverlässige Methode ohne Kontext-Konflikte
+  if(origAlpha>0){
+    const tmp=document.createElement('canvas');
+    tmp.width=w; tmp.height=h;
+    const t2=tmp.getContext('2d');
+    t2.fillStyle='#111'; t2.fillRect(0,0,w,h);
+    t2.globalAlpha=origAlpha;
+    t2.drawImage(srcImg,imgX,imgY,imgW,imgH);
+    t2.globalAlpha=1;
+    drawDots2D(t2,dots,imgW,imgH,scaleFactor,params,imgX,imgY);
+    _blitToGL(tmp,w,h);
+    return;
+  }
+
+  // Ohne Überlagerung: direkt WebGL-Punkte
+  cv.width=w; cv.height=h;
+  gl.viewport(0,0,w,h);
+  gl.clearColor(17/255,17/255,17/255,1);
+  gl.clear(gl.COLOR_BUFFER_BIT);
+  const verts=buildVertices(dots,imgW,imgH,scaleFactor,params);
+  if(verts.length===0)return;
+  const STRIDE=7, bpe=Float32Array.BYTES_PER_ELEMENT;
+  gl.useProgram(glProg);
+  gl.bindBuffer(gl.ARRAY_BUFFER,glBuf);
+  gl.bufferData(gl.ARRAY_BUFFER,verts,gl.DYNAMIC_DRAW);
+  gl.uniform2f(gl.getUniformLocation(glProg,'u_res'),w,h);
+  const aPos=gl.getAttribLocation(glProg,'a_pos');
+  const aCol=gl.getAttribLocation(glProg,'a_color');
+  const aSz =gl.getAttribLocation(glProg,'a_size');
+  gl.enableVertexAttribArray(aPos); gl.vertexAttribPointer(aPos,2,gl.FLOAT,false,STRIDE*bpe,0);
+  gl.enableVertexAttribArray(aCol); gl.vertexAttribPointer(aCol,4,gl.FLOAT,false,STRIDE*bpe,2*bpe);
+  gl.enableVertexAttribArray(aSz);  gl.vertexAttribPointer(aSz, 1,gl.FLOAT,false,STRIDE*bpe,6*bpe);
+  gl.drawArrays(gl.POINTS,0,verts.length/STRIDE);
+}
+
+function _blitToGL(srcCanvas, w, h){
+  cv.width=w; cv.height=h;
+  gl.viewport(0,0,w,h);
+  gl.clearColor(17/255,17/255,17/255,1);
+  gl.clear(gl.COLOR_BUFFER_BIT);
+  const tex=gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D,tex);
+  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,true);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+  gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,srcCanvas);
+  gl.useProgram(glTexProg);
+  gl.bindBuffer(gl.ARRAY_BUFFER,glQuadBuf);
+  const aT=gl.getAttribLocation(glTexProg,'a_pos');
+  gl.enableVertexAttribArray(aT);
+  gl.vertexAttribPointer(aT,2,gl.FLOAT,false,0,0);
+  gl.uniform1i(gl.getUniformLocation(glTexProg,'u_tex'),0);
+  gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
+  gl.deleteTexture(tex);
+  // Punkt-Attribs zurücksetzen damit nächster GL-Punktrender sauber startet
+  const aPos=gl.getAttribLocation(glProg,'a_pos');
+  const aCol=gl.getAttribLocation(glProg,'a_color');
+  const aSz =gl.getAttribLocation(glProg,'a_size');
+  gl.disableVertexAttribArray(aT);
+  gl.enableVertexAttribArray(aPos);
+  gl.enableVertexAttribArray(aCol);
+  gl.enableVertexAttribArray(aSz);
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// VORSCHAU
+// ═══════════════════════════════════════════════════════════════════════
 function scheduleRender(){
   clearTimeout(renderTimer);
   renderTimer=setTimeout(render,20);
 }
 
-function render(){
-  if(!srcImg){
-    if(useGL){
-      cv.width=600; cv.height=300;
-      gl.viewport(0,0,600,300);
-      gl.clearColor(17/255,17/255,17/255,1);
-      gl.clear(gl.COLOR_BUFFER_BIT);
-    } else {
-      const c2=cv.getContext('2d');
-      cv.width=600; cv.height=300;
-      c2.fillStyle='#111'; c2.fillRect(0,0,600,300);
-      c2.fillStyle='#444'; c2.font='14px system-ui'; c2.textAlign='center';
-      c2.fillText('Bitte ein Foto laden',300,155);
-    }
-    g('prevBadge').textContent='';
-    return;
-  }
-
-  const sc=previewScale();
-  const prevW=Math.round(srcImg.width*sc);
-  const prevH=Math.round(srcImg.height*sc);
+function getParams(sc){
   const aRad=dirAngle*Math.PI/180;
-  const params={
-    ptSize:     ptSizeVal()*sc,
+  return{
+    ptSize:     ptSizeVal()*(sc||1),
     ptAlpha:    +g('ptAlpha').value/100,
     curl:       +g('curl').value,
     curvature:  +g('curvature').value,
@@ -766,14 +709,33 @@ function render(){
     tailLen:    +g('tailLen').value/100,
     dx:Math.cos(aRad), dy:Math.sin(aRad),
   };
+}
 
-  if(useGL){
-    renderWebGL(dotDataPrev,prevW,prevH,sc,params);
-  } else {
+function render(){
+  if(!srcImg){
+    cv.width=600; cv.height=300;
+    if(useGL){
+      gl.viewport(0,0,600,300);
+      gl.clearColor(17/255,17/255,17/255,1);
+      gl.clear(gl.COLOR_BUFFER_BIT);
+    } else {
+      const c2=cv.getContext('2d');
+      c2.fillStyle='#111'; c2.fillRect(0,0,600,300);
+      c2.fillStyle='#444'; c2.font='14px system-ui'; c2.textAlign='center';
+      c2.fillText('Bitte ein Foto laden',300,155);
+    }
+    g('prevBadge').textContent='';
+    return;
+  }
+  const sc   =previewScale();
+  const prevW=Math.round(srcImg.width*sc);
+  const prevH=Math.round(srcImg.height*sc);
+  const params=getParams(sc);
+  if(useGL) renderWebGL(dotDataPrev,prevW,prevH,sc,params);
+  else {
     const c2=cv.getContext('2d');
     renderCanvas2D(c2,cv,dotDataPrev,prevW,prevH,sc,params);
   }
-
   const badge=(srcImg.width>PREV_MAX||srcImg.height>PREV_MAX)
     ?`Vorschau ${prevW}×${prevH} · Original ${srcImg.width}×${srcImg.height}`
     :`${prevW}×${prevH} px`;
@@ -782,85 +744,90 @@ function render(){
 
 g('reBtn').addEventListener('click',()=>{ buildPrevDots(); render(); });
 
-// ═══════════════════════════════════════════════════════════════════════════
-// SPEICHERN — Dateiname = Bildname + _PW_ + Index
-// ═══════════════════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════════════
+// SPEICHERN
+// Auto-Index: speichert saveIdx in localStorage, erhöht bis kein Konflikt
+// ═══════════════════════════════════════════════════════════════════════
 g('dlBtn').addEventListener('click', async ()=>{
   if(!srcImg)return;
   g('dlBtn').disabled=true;
   g('saveInfo').textContent='Wird berechnet …';
-  await new Promise(r=>setTimeout(r,30));
+  await new Promise(r=>setTimeout(r,50));
 
-  const oW=srcImg.width, oH=srcImg.height;
-  const step=densityStep();
-  const gt=g('gridType').value;
-  const origDots=sampleDots(srcImg,oW,oH,step,gt);
+  try{
+    // Export in Originalgrösse
+    const oW=srcImg.width, oH=srcImg.height;
+    const diag=Math.sqrt(oW*oW+oH*oH);
+    const step=densityStep(diag);
+    const origDots=sampleDots(srcImg,oW,oH,step,g('gridType').value);
+    const expCanvas=document.createElement('canvas');
+    const expCtx=expCanvas.getContext('2d');
+    renderCanvas2D(expCtx,expCanvas,origDots,oW,oH,1,getParams(1));
 
-  const expCanvas=document.createElement('canvas');
-  const expCtx=expCanvas.getContext('2d');
-  const aRad=dirAngle*Math.PI/180;
-  const params={
-    ptSize:     ptSizeVal(),
-    ptAlpha:    +g('ptAlpha').value/100,
-    curl:       +g('curl').value,
-    curvature:  +g('curvature').value,
-    curveStart: +g('curveStart').value/100,
-    spread:     +g('spread').value,
-    dissolve:   +g('dissolve').value/100,
-    endWidth:   +g('endWidth').value/100,
-    satPct:     +g('saturation').value,
-    origAlpha:  +g('origAlpha').value/100,
-    tailLen:    +g('tailLen').value/100,
-    dx:Math.cos(aRad), dy:Math.sin(aRad),
-  };
-  renderCanvas2D(expCtx,expCanvas,origDots,oW,oH,1,params);
+    // Blob erzeugen
+    const blob=await new Promise((res,rej)=>{
+      expCanvas.toBlob(b=>b?res(b):rej(new Error('Canvas leer')),'image/jpeg',0.93);
+    });
 
-  // Dateiname: Bildname + _PW_ + 001
-  const idxStr=String(saveIdx).padStart(3,'0');
-  const suggested=`${srcFileName}_PW_${idxStr}`;
-
-  const doSave=blob=>{
     if(window.showSaveFilePicker){
-      window.showSaveFilePicker({
-        suggestedName:suggested+'.jpg',
-        types:[{description:'JPEG Bild',accept:{'image/jpeg':['.jpg','.jpeg']}}]
-      }).then(async handle=>{
-        const w=await handle.createWritable();
-        await w.write(blob); await w.close();
-        localStorage.setItem('pw_lastSaveName',handle.name);
+      // Speichern-Unter Dialog: Index vorschlagen, User kann überschreiben
+      let idxStr=String(saveIdx).padStart(3,'0');
+      let suggested=`${srcFileName}_PW_${idxStr}`;
+      try{
+        const handle=await window.showSaveFilePicker({
+          suggestedName:suggested+'.jpg',
+          types:[{description:'JPEG Bild',accept:{'image/jpeg':['.jpg','.jpeg']}}]
+        });
+        const writable=await handle.createWritable();
+        await writable.write(blob);
+        await writable.close();
+        // Index aus gespeichertem Namen ablesen
+        const savedBase=handle.name.replace(/\.jpe?g$/i,'');
+        const m=savedBase.match(/_PW_(\d+)$/);
+        saveIdx=m?parseInt(m[1])+1:saveIdx+1;
+        localStorage.setItem('pw_idx_'+srcFileName,saveIdx);
         g('saveInfo').textContent=`Gespeichert: ${handle.name}  (${expCanvas.width}×${expCanvas.height} px)`;
-        saveIdx++;
-      }).catch(()=>{ g('saveInfo').textContent='Abgebrochen.'; })
-        .finally(()=>{ g('dlBtn').disabled=false; });
+      }catch(e){
+        if(e.name==='AbortError') g('saveInfo').textContent='Abgebrochen.';
+        else throw e;
+      }
     } else {
+      // Fallback: automatisch Index erhöhen (kein Konflikt möglich bei Download)
+      const idxStr=String(saveIdx).padStart(3,'0');
+      const name=`${srcFileName}_PW_${idxStr}.jpg`;
       const url=URL.createObjectURL(blob);
       const a=document.createElement('a');
-      a.download=suggested+'.jpg'; a.href=url; a.click();
-      setTimeout(()=>URL.revokeObjectURL(url),1000);
-      g('saveInfo').textContent=`Gespeichert: ${suggested}.jpg  (${expCanvas.width}×${expCanvas.height} px)`;
-      saveIdx++; g('dlBtn').disabled=false;
+      a.download=name; a.href=url; a.click();
+      setTimeout(()=>URL.revokeObjectURL(url),2000);
+      saveIdx++;
+      localStorage.setItem('pw_idx_'+srcFileName,saveIdx);
+      g('saveInfo').textContent=`Gespeichert: ${name}  (${expCanvas.width}×${expCanvas.height} px)`;
     }
-  };
-  expCanvas.toBlob(doSave,'image/jpeg',0.93);
+  }catch(err){
+    console.error(err);
+    g('saveInfo').textContent='Fehler: '+err.message;
+  }finally{
+    g('dlBtn').disabled=false;
+  }
 });
 
-// ═══════════════════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════════════
 // INIT
-// ═══════════════════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════════════
 initWebGL();
-setDirAngle(0);
-g('ptSizeV').textContent    =(ptSizeVal()).toFixed(1)+' px';
-g('densityV').textContent   =densityDisplay(+g('density').value);
-g('ptAlphaV').textContent   ='90%';
-g('saturationV').textContent='100%';
+setDirAngle(15); // 15° als Startrichtung
+g('ptSizeV').textContent    ='2 px';
+g('densityV').textContent   ='50%';
+g('ptAlphaV').textContent   ='70%';
+g('saturationV').textContent='80%';
 g('origAlphaV').textContent ='0%';
 g('tailLenV').textContent   ='60%';
-g('curlV').textContent      ='25';
+g('curlV').textContent      ='0';
 g('curvatureV').textContent ='0°';
 g('curveStartV').textContent='67%';
-g('endWidthV').textContent  ='0%';
-g('spreadV').textContent    ='30';
+g('spreadV').textContent    ='60';
 g('dissolveV').textContent  ='60%';
+g('endWidthV').textContent  ='0%';
 render();
 if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
 </script>
