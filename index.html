@@ -165,6 +165,11 @@ button:disabled{opacity:.4;cursor:default;}
       <span class="val" id="curvatureV">0°</span>
     </div>
     <div class="cr">
+      <label>Kurve ab</label>
+      <input type="range" id="curveStart" min="0" max="100" value="67" step="1">
+      <span class="val" id="curveStartV">67%</span>
+    </div>
+    <div class="cr">
       <label>Streuung</label>
       <input type="range" id="spread" min="0" max="80" value="30" step="1">
       <span class="val" id="spreadV">30</span>
@@ -173,6 +178,11 @@ button:disabled{opacity:.4;cursor:default;}
       <label>Verflüchtigung</label>
       <input type="range" id="dissolve" min="0" max="100" value="60" step="1">
       <span class="val" id="dissolveV">60%</span>
+    </div>
+    <div class="cr">
+      <label>Endbreite</label>
+      <input type="range" id="endWidth" min="0" max="100" value="0" step="1">
+      <span class="val" id="endWidthV">0%</span>
     </div>
   </div>
 
@@ -371,9 +381,11 @@ bindSlider('saturation','saturationV','%', null,scheduleRender);
 bindSlider('origAlpha','origAlphaV', '%',  null,scheduleRender);
 bindSlider('tailLen',  'tailLenV',   '%',  null,scheduleRender);
 bindSlider('curl',     'curlV',      '',   null,scheduleRender);
-bindSlider('curvature','curvatureV', '°',  null,scheduleRender);
+bindSlider('curvature', 'curvatureV',  '°', null,scheduleRender);
+bindSlider('curveStart','curveStartV','%', null,scheduleRender);
 bindSlider('spread',   'spreadV',    '',   null,scheduleRender);
-bindSlider('dissolve', 'dissolveV',  '%',  null,scheduleRender);
+bindSlider('dissolve',  'dissolveV',  '%', null,scheduleRender);
+bindSlider('endWidth',  'endWidthV',  '%', null,scheduleRender);
 g('gridType').addEventListener('change',()=>{buildPrevDots();scheduleRender();});
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -537,7 +549,7 @@ function curvedOffset(t, dist, dx, dy, curvatureDeg){
 // VERTICES BAUEN (für WebGL)
 // ═══════════════════════════════════════════════════════════════════════════
 function buildVertices(dots, imgW, imgH, scaleFactor, params){
-  const{ptSize,ptAlpha,curl,curvature,spread,dissolve,satPct,tailLen,dx,dy}=params;
+  const{ptSize,ptAlpha,curl,curvature,curveStart,spread,dissolve,endWidth,satPct,tailLen,dx,dy}=params;
   const tailPx=Math.max(imgW,imgH)*tailLen;
   const padLeft=dx<0?tailPx*(-dx):0;
   const padTop =dy<0?tailPx*(-dy):0;
@@ -559,13 +571,17 @@ function buildVertices(dots, imgW, imgH, scaleFactor, params){
       const dist=t*tailPx;
       const noise=(Math.random()-0.5)*spread*scaleFactor*t*2;
       const curlOff=curl*scaleFactor*t*t;
-      // Bogen-Offset
-      const bo=curvedOffset(t,dist,dx,dy,curvature);
+      // Kurve erst ab curveStart: lokales t innerhalb des Kurvenbereichs
+      const tCurve = t < curveStart ? 0 : (t - curveStart) / (1 - curveStart + 0.001);
+      const bo=curvedOffset(tCurve, dist, dx, dy, curvature);
       const tx=px+bo.x+perpX*(curlOff+noise);
       const ty=py+bo.y+perpY*(curlOff+noise);
       const alpha=baseA*Math.pow(1-t,1.2)*(1-dissolve*t*0.9);
       if(alpha<=0.01)continue;
-      const sz=Math.max(0.5,ptR*2*(1-t*dissolve*0.7));
+      // Endbreite: 0%=spitz(auf 0 zusammenlaufend), 100%=gleichbleibend
+      // Grösse = ptR * (endWidth + (1-endWidth)*(1-t)) bei dissolve=0
+      const widthFactor = endWidth + (1-endWidth)*(1-t);
+      const sz=Math.max(0.5, ptR*2 * widthFactor * (1 - dissolve*(1-endWidth)*t*0.7));
       verts.push(tx,ty,sr/255,sg/255,sb/255,Math.min(1,alpha),sz);
     }
   });
@@ -578,81 +594,87 @@ function buildVertices(dots, imgW, imgH, scaleFactor, params){
 function renderWebGL(dots, imgW, imgH, scaleFactor, params){
   const{origAlpha,tailLen,dx,dy}=params;
   const{w,h,imgX,imgY}=canvasDims(imgW,imgH,tailLen,dx,dy);
+
+  // Wenn Überlagerung aktiv: alles auf Offscreen-Canvas2D, dann als Bild in CV
+  // Das vermeidet WebGL/2D-Kontext-Konflikte vollständig.
+  if(origAlpha>0){
+    const tmp=document.createElement('canvas');
+    tmp.width=w; tmp.height=h;
+    const t2=tmp.getContext('2d');
+    t2.fillStyle='#111'; t2.fillRect(0,0,w,h);
+    t2.globalAlpha=origAlpha;
+    t2.drawImage(srcImg,imgX,imgY,imgW,imgH);
+    t2.globalAlpha=1;
+    _drawPoints2D(t2,dots,imgW,imgH,scaleFactor,params,imgX,imgY);
+    // Ergebnis in GL-Canvas via Textur-Blit
+    cv.width=w; cv.height=h;
+    gl.viewport(0,0,w,h);
+    gl.clearColor(17/255,17/255,17/255,1);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    if(!glTexProg)_initTexProg();
+    const tex=gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D,tex);
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,true);
+    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+    gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,tmp);
+    gl.useProgram(glTexProg);
+    gl.bindBuffer(gl.ARRAY_BUFFER,glQuadBuf);
+    const aT=gl.getAttribLocation(glTexProg,'a_pos');
+    gl.enableVertexAttribArray(aT);
+    gl.vertexAttribPointer(aT,2,gl.FLOAT,false,0,0);
+    gl.uniform1i(gl.getUniformLocation(glTexProg,'u_tex'),0);
+    gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
+    gl.deleteTexture(tex);
+    return;
+  }
+
+  // Kein Overlay: schneller WebGL-Punktrender
   cv.width=w; cv.height=h;
   gl.viewport(0,0,w,h);
   gl.clearColor(17/255,17/255,17/255,1);
   gl.clear(gl.COLOR_BUFFER_BIT);
-
-  // Originalbild-Überlagerung: vor den Punkten (unter) als 2D auf temporärem Canvas,
-  // dann als Textur zeichnen — für Einfachheit: 2D-Canvas danach compositen
-  // Wir zeichnen Punkte ZUERST, dann Bild darüber (origAlpha = Deckung des Bildes)
   const verts=buildVertices(dots,imgW,imgH,scaleFactor,params);
   const STRIDE=7;
   gl.useProgram(glProg);
   gl.bindBuffer(gl.ARRAY_BUFFER,glBuf);
   gl.bufferData(gl.ARRAY_BUFFER,verts,gl.DYNAMIC_DRAW);
   const bpe=Float32Array.BYTES_PER_ELEMENT;
-  const aPos  =gl.getAttribLocation(glProg,'a_pos');
-  const aColor=gl.getAttribLocation(glProg,'a_color');
-  const aSize =gl.getAttribLocation(glProg,'a_size');
-  const uRes  =gl.getUniformLocation(glProg,'u_res');
-  gl.uniform2f(uRes,w,h);
-  gl.enableVertexAttribArray(aPos);
-  gl.vertexAttribPointer(aPos,  2,gl.FLOAT,false,STRIDE*bpe,0);
-  gl.enableVertexAttribArray(aColor);
-  gl.vertexAttribPointer(aColor,4,gl.FLOAT,false,STRIDE*bpe,2*bpe);
-  gl.enableVertexAttribArray(aSize);
-  gl.vertexAttribPointer(aSize, 1,gl.FLOAT,false,STRIDE*bpe,6*bpe);
+  gl.uniform2f(gl.getUniformLocation(glProg,'u_res'),w,h);
+  const aPos=gl.getAttribLocation(glProg,'a_pos');
+  const aCol=gl.getAttribLocation(glProg,'a_color');
+  const aSz =gl.getAttribLocation(glProg,'a_size');
+  gl.enableVertexAttribArray(aPos); gl.vertexAttribPointer(aPos,2,gl.FLOAT,false,STRIDE*bpe,0);
+  gl.enableVertexAttribArray(aCol); gl.vertexAttribPointer(aCol,4,gl.FLOAT,false,STRIDE*bpe,2*bpe);
+  gl.enableVertexAttribArray(aSz);  gl.vertexAttribPointer(aSz, 1,gl.FLOAT,false,STRIDE*bpe,6*bpe);
   gl.drawArrays(gl.POINTS,0,verts.length/STRIDE);
+}
 
-  // Originalbild-Überlagerung via 2D-Compositing über WebGL
-  if(origAlpha>0){
-    // Wir brauchen ein 2D-Overlay-Canvas
-    // Da preserveDrawingBuffer=true, können wir das CV als Quelle nutzen
-    // Einfachste Methode: temporäres Canvas mit Bild + Alpha, dann auf cv zeichnen
-    // aber cv ist WebGL — wir müssen 2D-Kontext auf einem tmp-Canvas nutzen
-    // und dann das Ergebnis als Bild über WebGL legen ist komplex.
-    // Lösung: nach dem GL-Draw ein unsichtbares 2D-Canvas als Overlay positionieren
-    // Für Vorschau: wir nutzen ein CSS-overlay (einfacher)
-    // Das ist für Vorschau OK — beim Export nutzen wir Canvas2D sowieso
-    let overlay=document.getElementById('origOverlay');
-    if(!overlay){
-      overlay=document.createElement('canvas');
-      overlay.id='origOverlay';
-      overlay.style.cssText='position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;';
-      document.querySelector('.canvas-wrap').appendChild(overlay);
-    }
-    overlay.width=w; overlay.height=h;
-    const o2d=overlay.getContext('2d');
-    o2d.clearRect(0,0,w,h);
-    o2d.globalAlpha=origAlpha;
-    o2d.drawImage(srcImg,imgX,imgY,imgW,imgH);
-  } else {
-    const overlay=document.getElementById('origOverlay');
-    if(overlay){ const o2=overlay.getContext('2d'); o2.clearRect(0,0,overlay.width,overlay.height); }
-  }
+let glTexProg=null,glQuadBuf=null;
+function _initTexProg(){
+  const vs=`attribute vec2 a_pos;varying vec2 v_uv;void main(){v_uv=a_pos*0.5+0.5;gl_Position=vec4(a_pos,0,1);}`;
+  const fs=`precision mediump float;uniform sampler2D u_tex;varying vec2 v_uv;void main(){gl_FragColor=texture2D(u_tex,v_uv);}`;
+  const cs=(t,s)=>{const sh=gl.createShader(t);gl.shaderSource(sh,s);gl.compileShader(sh);return sh;};
+  glTexProg=gl.createProgram();
+  gl.attachShader(glTexProg,cs(gl.VERTEX_SHADER,vs));
+  gl.attachShader(glTexProg,cs(gl.FRAGMENT_SHADER,fs));
+  gl.linkProgram(glTexProg);
+  glQuadBuf=gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER,glQuadBuf);
+  gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
 // CANVAS2D RENDER (Fallback + Export)
 // ═══════════════════════════════════════════════════════════════════════════
-function renderCanvas2D(tCtx, tCanvas, dots, imgW, imgH, scaleFactor, params){
-  const{ptSize,ptAlpha,curl,curvature,spread,dissolve,satPct,origAlpha,tailLen,dx,dy}=params;
-  const{w,h,imgX,imgY}=canvasDims(imgW,imgH,tailLen,dx,dy);
-  tCanvas.width=w; tCanvas.height=h;
-  tCtx.fillStyle='#111'; tCtx.fillRect(0,0,w,h);
 
-  // Originalbild UNTER den Punkten
-  if(origAlpha>0){
-    tCtx.globalAlpha=origAlpha;
-    tCtx.drawImage(srcImg,imgX,imgY,imgW,imgH);
-    tCtx.globalAlpha=1;
-  }
-
+// Interne Hilfsfunktion: nur Punkte zeichnen (kein Hintergrund, kein Bild)
+function _drawPoints2D(tCtx, dots, imgW, imgH, scaleFactor, params, imgX, imgY){
+  const{ptSize,ptAlpha,curl,curvature,curveStart,spread,dissolve,endWidth,satPct,tailLen,dx,dy}=params;
   const ptR=(ptSize/2)*scaleFactor;
   const STEPS=18;
   const perpX=-dy, perpY=dx;
-
   dots.forEach(d=>{
     const[sr,sg,sb]=adjustSaturation(d.r,d.g,d.b,satPct);
     const baseA=ptAlpha*d.a/255;
@@ -668,18 +690,36 @@ function renderCanvas2D(tCtx, tCanvas, dots, imgW, imgH, scaleFactor, params){
       const dist=t*Math.max(imgW,imgH)*tailLen;
       const noise=(Math.random()-0.5)*spread*scaleFactor*t*2;
       const curlOff=curl*scaleFactor*t*t;
-      const bo=curvedOffset(t,dist,dx,dy,curvature);
+      // Kurve erst ab curveStart
+      const tCurve = t < curveStart ? 0 : (t - curveStart) / (1 - curveStart + 0.001);
+      const bo=curvedOffset(tCurve, dist, dx, dy, curvature);
       const tx=px+bo.x+perpX*(curlOff+noise);
       const ty=py+bo.y+perpY*(curlOff+noise);
       const alpha=baseA*Math.pow(1-t,1.2)*(1-dissolve*t*0.9);
       if(alpha<=0.01)continue;
-      const sz=Math.max(0.3,ptR*(1-t*dissolve*0.7));
+      // Endbreite: 0=spitz, 100=gleichbleibend
+      const widthFactor = endWidth + (1-endWidth)*(1-t);
+      const sz=Math.max(0.3, ptR * widthFactor * (1 - dissolve*(1-endWidth)*t*0.7));
       tCtx.beginPath();
       tCtx.arc(tx,ty,sz,0,Math.PI*2);
       tCtx.fillStyle=`rgba(${sr},${sg},${sb},${Math.min(1,alpha)})`;
       tCtx.fill();
     }
   });
+}
+
+// Vollständiger Canvas2D-Render: Hintergrund + Bild + Punkte
+function renderCanvas2D(tCtx, tCanvas, dots, imgW, imgH, scaleFactor, params){
+  const{origAlpha,tailLen,dx,dy}=params;
+  const{w,h,imgX,imgY}=canvasDims(imgW,imgH,tailLen,dx,dy);
+  tCanvas.width=w; tCanvas.height=h;
+  tCtx.fillStyle='#111'; tCtx.fillRect(0,0,w,h);
+  if(origAlpha>0){
+    tCtx.globalAlpha=origAlpha;
+    tCtx.drawImage(srcImg,imgX,imgY,imgW,imgH);
+    tCtx.globalAlpha=1;
+  }
+  _drawPoints2D(tCtx,dots,imgW,imgH,scaleFactor,params,imgX,imgY);
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -691,9 +731,6 @@ function scheduleRender(){
 }
 
 function render(){
-  // Overlay verstecken wenn kein Bild
-  const overlay=document.getElementById('origOverlay');
-
   if(!srcImg){
     if(useGL){
       cv.width=600; cv.height=300;
@@ -707,26 +744,26 @@ function render(){
       c2.fillStyle='#444'; c2.font='14px system-ui'; c2.textAlign='center';
       c2.fillText('Bitte ein Foto laden',300,155);
     }
-    if(overlay)overlay.style.display='none';
     g('prevBadge').textContent='';
     return;
   }
-  if(overlay)overlay.style.display='';
 
   const sc=previewScale();
   const prevW=Math.round(srcImg.width*sc);
   const prevH=Math.round(srcImg.height*sc);
   const aRad=dirAngle*Math.PI/180;
   const params={
-    ptSize:    ptSizeVal()*sc,
-    ptAlpha:   +g('ptAlpha').value/100,
-    curl:      +g('curl').value,
-    curvature: +g('curvature').value,
-    spread:    +g('spread').value,
-    dissolve:  +g('dissolve').value/100,
-    satPct:    +g('saturation').value,
-    origAlpha: +g('origAlpha').value/100,
-    tailLen:   +g('tailLen').value/100,
+    ptSize:     ptSizeVal()*sc,
+    ptAlpha:    +g('ptAlpha').value/100,
+    curl:       +g('curl').value,
+    curvature:  +g('curvature').value,
+    curveStart: +g('curveStart').value/100,
+    spread:     +g('spread').value,
+    dissolve:   +g('dissolve').value/100,
+    endWidth:   +g('endWidth').value/100,
+    satPct:     +g('saturation').value,
+    origAlpha:  +g('origAlpha').value/100,
+    tailLen:    +g('tailLen').value/100,
     dx:Math.cos(aRad), dy:Math.sin(aRad),
   };
 
@@ -763,15 +800,17 @@ g('dlBtn').addEventListener('click', async ()=>{
   const expCtx=expCanvas.getContext('2d');
   const aRad=dirAngle*Math.PI/180;
   const params={
-    ptSize:    ptSizeVal(),
-    ptAlpha:   +g('ptAlpha').value/100,
-    curl:      +g('curl').value,
-    curvature: +g('curvature').value,
-    spread:    +g('spread').value,
-    dissolve:  +g('dissolve').value/100,
-    satPct:    +g('saturation').value,
-    origAlpha: +g('origAlpha').value/100,
-    tailLen:   +g('tailLen').value/100,
+    ptSize:     ptSizeVal(),
+    ptAlpha:    +g('ptAlpha').value/100,
+    curl:       +g('curl').value,
+    curvature:  +g('curvature').value,
+    curveStart: +g('curveStart').value/100,
+    spread:     +g('spread').value,
+    dissolve:   +g('dissolve').value/100,
+    endWidth:   +g('endWidth').value/100,
+    satPct:     +g('saturation').value,
+    origAlpha:  +g('origAlpha').value/100,
+    tailLen:    +g('tailLen').value/100,
     dx:Math.cos(aRad), dy:Math.sin(aRad),
   };
   renderCanvas2D(expCtx,expCanvas,origDots,oW,oH,1,params);
@@ -818,6 +857,8 @@ g('origAlphaV').textContent ='0%';
 g('tailLenV').textContent   ='60%';
 g('curlV').textContent      ='25';
 g('curvatureV').textContent ='0°';
+g('curveStartV').textContent='67%';
+g('endWidthV').textContent  ='0%';
 g('spreadV').textContent    ='30';
 g('dissolveV').textContent  ='60%';
 render();
