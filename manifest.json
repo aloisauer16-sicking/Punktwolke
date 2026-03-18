@@ -1,20 +1,13 @@
 {
-  "name": "Punktwolke 03",
-  "short_name": "PW 03",
-  "description": "Foto in Punktwolke mit Rauchfahne verwandeln – © Alois Auer 2026",
+  "name": "Punktwolke 03A",
+  "short_name": "PW 03A",
+  "description": "Foto in Punktwolke – © Alois Auer 2026",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#111111",
   "theme_color": "#111111",
-  "orientation": "portrait-primary",
   "icons": [
-    {
-      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='24' fill='%23111'/><circle cx='60' cy='60' r='22' fill='white'/><circle cx='120' cy='50' r='14' fill='white' opacity='.7'/><circle cx='80' cy='110' r='18' fill='white' opacity='.8'/><circle cx='145' cy='100' r='10' fill='white' opacity='.5'/><circle cx='40' cy='145' r='12' fill='white' opacity='.4'/><circle cx='160' cy='150' r='7' fill='white' opacity='.3'/></svg>",
-      "sizes": "192x192", "type": "image/svg+xml", "purpose": "any maskable"
-    },
-    {
-      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='64' fill='%23111'/><circle cx='160' cy='160' r='58' fill='white'/><circle cx='320' cy='130' r='38' fill='white' opacity='.7'/><circle cx='210' cy='290' r='48' fill='white' opacity='.8'/><circle cx='390' cy='270' r='28' fill='white' opacity='.5'/><circle cx='100' cy='390' r='32' fill='white' opacity='.4'/><circle cx='430' cy='400' r='18' fill='white' opacity='.3'/></svg>",
-      "sizes": "512x512", "type": "image/svg+xml", "purpose": "any maskable"
-    }
+    {"src":"data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='24' fill='%23111'/><circle cx='60' cy='60' r='22' fill='white'/><circle cx='120' cy='50' r='14' fill='white' opacity='.7'/><circle cx='80' cy='110' r='18' fill='white' opacity='.8'/><circle cx='145' cy='100' r='10' fill='white' opacity='.5'/></svg>","sizes":"192x192","type":"image/svg+xml","purpose":"any maskable"},
+    {"src":"data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='64' fill='%23111'/><circle cx='160' cy='160' r='58' fill='white'/><circle cx='320' cy='130' r='38' fill='white' opacity='.7'/><circle cx='210' cy='290' r='48' fill='white' opacity='.8'/><circle cx='390' cy='270' r='28' fill='white' opacity='.5'/></svg>","sizes":"512x512","type":"image/svg+xml","purpose":"any maskable"}
   ]
 }
